@@ -1,0 +1,56 @@
+{% set pantalla = 'seleccionar_conceptos' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-10">
+    <h1 class="text-2xl font-bold text-center mb-6">Seleccionar Conceptos de Avance</h1>
+
+    <form method="POST">
+        <div class="overflow-auto border rounded-lg shadow">
+            <table class="min-w-full table-auto text-sm text-right">
+                <thead class="bg-gray-100 text-gray-700">
+                    <tr>
+                        <th class="px-4 py-2 text-left">✔</th>
+                        <th class="px-4 py-2 text-left">Clave</th>
+                        <th class="px-4 py-2 text-left">Descripción</th>
+                        <th class="px-4 py-2">Unidad</th>
+                        <th class="px-4 py-2">PU</th>
+                        <th class="px-4 py-2">Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for nombre_partida, conceptos in conceptos_por_partida.items() %}
+                        <tr class="bg-gray-200 font-semibold text-left">
+                            <td colspan="6" class="px-4 py-2">{{ nombre_partida }}</td>
+                        </tr>
+                        {% for c in conceptos %}
+                        <tr class="border-t">
+                            <td class="px-4 py-2 text-left">
+                                <input type="checkbox" name="concepto_id[]" value="{{ c.clave }}">
+                            </td>
+                            <td class="px-4 py-2 text-left">
+                                {{ c.clave }}
+                                {% if c.clave.startswith('E') %}
+                                    <span class="ml-2 text-sm text-gray-600">({{ c.estatus }})</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-2 text-left w-[25rem]">{{ c.descripcion }}</td>
+                            <td class="px-4 py-2">{{ c.unidad }}</td>
+                            <td class="px-4 py-2">${{ '%.2f'|format(c.precio_unitario) }}</td>
+                            <td class="px-4 py-2">{{ c.cantidad }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 text-right">
+            <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded shadow">
+                Filtrar y Continuar →
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

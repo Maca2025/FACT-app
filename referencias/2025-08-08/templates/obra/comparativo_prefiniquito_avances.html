@@ -1,0 +1,123 @@
+{% set pantalla = 'comparativo_prefiniquito_avances' %}
+{% extends 'base.html' %}
+
+{% block title %}Prefiniquito con Avances{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-bold">Prefiniquito con Avances</h1>
+    <div class="px-4 py-2 border rounded-lg font-semibold">
+        <div class="{% if diferencia_total < 0 %}bg-red-100 text-red-800 border-red-300{% else %}bg-green-100 text-green-800 border-green-300{% endif %} px-2 py-1 border rounded mb-1">
+            Diferencia con contrato original:<br>
+            {{ diferencia_total | moneda }}
+        </div>
+        <div class="{% if (monto_original_contrato - subtotales_generales.avance) < 0 %}
+                        bg-red-100 text-red-800 border-red-300
+                     {% else %}
+                        bg-blue-100 text-blue-800 border-blue-300
+                     {% endif %} px-2 py-1 border rounded">
+            Diferencia con avance acumulado:<br>
+            {{ (monto_original_contrato - subtotales_generales.avance) | moneda }}
+        </div>
+    </div>
+</div>
+
+    <p class="text-center text-sm mb-6">
+        Contrato: <strong>{{ contrato.nombre }}</strong>
+    </p>
+
+    <div class="overflow-auto">
+        <table class="table-auto w-full text-sm border border-gray-300">
+            <thead class="bg-gray-200 text-left">
+                <tr>
+                    <th class="px-2 py-1">Partida</th>
+                    <th class="px-2 py-1">Nombre Partida</th>
+                    <th class="px-2 py-1">Clave</th>
+                    <th class="px-2 py-1">Estatus</th>
+                    <th class="px-2 py-1 w-96">Descripción</th>
+                    <th class="px-2 py-1">Unidad</th>
+                    <th class="px-2 py-1">P. Unitario</th>
+                    <th class="px-2 py-1 bg-gray-100">Cantidad Catálogo</th>
+                    <th class="px-2 py-1 bg-gray-100">Subtotal Catálogo</th>
+                    <th class="px-2 py-1 text-blue-800">Cantidad Acumulada</th>
+                    <th class="px-2 py-1 text-blue-800">Subtotal Acumulado</th>
+                    <th class="px-2 py-1 text-violet-800 bg-red-50">Cantidad Pendiente</th>
+                    <th class="px-2 py-1 text-violet-800 bg-red-50">Subtotal Pendiente</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for partida, conceptos in filas_por_partida.items() %}
+                    {% for fila in conceptos %}
+                    <tr class="border-t">
+                        <td class="px-2 py-1">{{ fila.clave.split('.')[0] }}</td>
+                        <td class="px-2 py-1">{{ partida }}</td>
+                        <td class="px-2 py-1">{{ fila.clave }}</td>
+                        <td class="px-2 py-1">{{ fila.estatus if fila.clave.startswith('E') else '—' }}</td>
+                        <td class="px-2 py-1 w-96 whitespace-normal">{{ fila.descripcion }}</td>
+                        <td class="px-2 py-1">{{ fila.unidad }}</td>
+                        <td class="px-2 py-1">{{ fila.precio_unitario | moneda }}</td>
+                        <td class="px-2 py-1 bg-gray-100">{{ fila.cantidad_catalogo | round(2) }}</td>
+                        <td class="px-2 py-1 bg-gray-100">{{ fila.subtotal_catalogo | moneda }}</td>
+                        <td class="px-2 py-1 text-blue-800">{{ fila.cantidad_avance | round(2) }}</td>
+                        <td class="px-2 py-1 text-blue-800">{{ fila.subtotal_avance | moneda }}</td>
+                        <td class="px-2 py-1 font-semibold bg-red-50 {% if fila.cantidad_pendiente < 0 %}text-red-600{% endif %}">
+                            {{ fila.cantidad_pendiente | round(2) }}
+                        </td>
+                        <td class="px-2 py-1 font-semibold bg-red-50 {% if fila.subtotal_pendiente < 0 %}text-red-600{% endif %}">
+                            {{ fila.subtotal_pendiente | moneda }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="border-t font-bold bg-gray-100">
+                        <td colspan="8"></td>
+                        <td class="{% if totales_por_partida[partida]['catalogo'] < 0 %}text-red-600{% endif %}">
+                            {{ totales_por_partida[partida]['catalogo'] | moneda }}
+                        </td>
+                        <td></td>
+                        <td class="{% if totales_por_partida[partida]['avance'] < 0 %}text-red-600{% endif %}">
+                            {{ totales_por_partida[partida]['avance'] | moneda }}
+                        </td>
+                        <td></td>
+                        <td class="{% if totales_por_partida[partida]['pendiente'] < 0 %}text-red-600{% endif %}">
+                            {{ totales_por_partida[partida]['pendiente'] | moneda }}
+                        </td>
+                    </tr>
+                    <tr><td colspan="13" class="border-t-4"></td></tr>
+                {% endfor %}
+            </tbody>
+            <tfoot class="font-bold bg-gray-200">
+                <tr>
+                    <td colspan="8"></td>
+                    <td>{{ subtotales_generales.catalogo | moneda }}</td>
+                    <td></td>
+                    <td>{{ subtotales_generales.avance | moneda }}</td>
+                    <td></td>
+                    <td>{{ subtotales_generales.pendiente | moneda }}</td>
+                </tr>
+                <tr class="bg-gray-100">
+                    <td colspan="8" class="text-right pr-2">IVA (16%):</td>
+                    <td>{{ subtotales_generales.iva_catalogo | moneda }}</td>
+                    <td></td>
+                    <td>{{ subtotales_generales.iva_avance | moneda }}</td>
+                    <td></td>
+                    <td>{{ subtotales_generales.iva_pendiente | moneda }}</td>
+                </tr>
+                <tr class="bg-gray-200">
+                    <td colspan="8" class="text-right pr-2">Total con IVA:</td>
+                    <td>{{ subtotales_generales.total_catalogo | moneda }}</td>
+                    <td></td>
+                    <td>{{ subtotales_generales.total_avance | moneda }}</td>
+                    <td></td>
+                    <td>{{ subtotales_generales.total_pendiente | moneda }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <div class="text-center mt-6">
+        <a href="{{ url_for('contratos_obra.panel_contrato', contrato_id=contrato.id) }}" class="text-sm text-blue-700 underline">
+            ← Volver al panel del contrato
+        </a>
+    </div>
+</div>
+{% endblock %}

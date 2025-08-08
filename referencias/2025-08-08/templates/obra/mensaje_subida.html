@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mensaje</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="max-w-xl mx-auto mt-20 bg-white shadow-md rounded-xl p-8 text-center">
+        <h1 class="text-2xl font-bold mb-4">Resultado</h1>
+        <p class="mb-6">{{ mensaje }}</p>
+
+        <a href="{{ url_for('contratos_obra.panel_contrato', contrato_id=contrato_id) }}"
+           class="inline-block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+            Volver al Panel del Contrato
+        </a>
+    </div>
+</body>
+</html>

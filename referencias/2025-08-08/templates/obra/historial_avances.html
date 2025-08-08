@@ -1,0 +1,59 @@
+{% set pantalla = 'historial_avances' %}
+{% extends 'base.html' %}
+
+{% block title %}Historial de Avances{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h1 class="text-2xl font-bold text-center mb-6">Historial de Avances</h1>
+    <h2 class="text-xl font-semibold text-center mb-4">{{ contrato.nombre }}</h2>
+
+    {% if avances %}
+    <div class="overflow-auto">
+        <table class="table-auto w-full text-sm border border-gray-300">
+            <thead class="bg-gray-200 text-left">
+                <tr>
+                    <th class="px-3 py-2">Fecha</th>
+                    <th class="px-3 py-2">Catálogo Usado</th>
+                    <th class="px-3 py-2">Número de Conceptos</th>
+                    <th class="px-3 py-2 text-right">Monto Total</th>
+                    <th class="px-3 py-2 text-center">Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for avance in avances %}
+                <tr class="hover:bg-gray-50">
+                    <td class="border-t px-3 py-2">
+                        <a href="{{ url_for('avances.detalle_avance', avance_id=avance.id) }}" class="text-blue-700 underline">
+                            {{ avance.fecha.strftime('%d/%m/%Y') }}
+                        </a>
+                    </td>
+                    <td class="border-t px-3 py-2">{{ avance.version_catalogo.nombre if avance.version_catalogo else 'N/A' }}</td>
+                    <td class="border-t px-3 py-2">{{ avance.detalles|length }}</td>
+                    <td class="border-t px-3 py-2 text-right">
+                        {{ (avance.detalles | map(attribute='subtotal_avance') | sum) | moneda }}
+                    </td>
+                    <td class="border-t px-3 py-2 text-center">
+                        <form method="POST" action="{{ url_for('avances.eliminar_avance', avance_id=avance.id) }}"
+                              onsubmit="return confirm('¿Estás seguro de que deseas eliminar este avance?');">
+                            <button type="submit" class="text-red-600 hover:underline text-sm">
+                                Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-center text-gray-600">No hay avances registrados para este contrato.</p>
+    {% endif %}
+
+    <div class="text-center mt-6">
+        <a href="{{ url_for('contratos_obra.panel_contrato', contrato_id=contrato.id) }}" class="text-sm text-blue-700 underline">
+            ← Volver al Panel del Contrato
+        </a>
+    </div>
+</div>
+{% endblock %}

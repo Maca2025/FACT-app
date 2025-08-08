@@ -1,0 +1,73 @@
+{% set pantalla = 'reporte_facturas' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-gray-100 text-gray-800 p-8">
+    <a href="{{ url_for('index') }}" class="text-blue-600 underline mb-6 block">&larr; Volver al inicio</a>
+    <h1 class="text-3xl font-bold mb-8">Reporte de Facturas por Empresa</h1>
+
+    <form method="POST" class="mb-8 flex gap-4 items-end">
+        <div>
+            <label class="block text-sm font-medium">Estado:</label>
+            <select name="estado" class="border border-gray-300 rounded px-3 py-2 w-full">
+                <option value="">Todos</option>
+                {% for estado in estados %}
+                    <option value="{{ estado }}" {% if estado == estado_filtro %}selected{% endif %}>{{ estado }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label class="block text-sm font-medium">Centro:</label>
+            <select name="centro_id" class="border border-gray-300 rounded px-3 py-2 w-full">
+                <option value="">Todos</option>
+                {% for centro in centros %}
+                    <option value="{{ centro.id }}" {% if centro.id == centro_id %}selected{% endif %}>{{ centro.codigo_centro }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Filtrar
+        </button>
+    </form>
+
+    {% for grupo in datos_por_empresa %}
+        <div class="mb-10">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">{{ grupo.empresa }}</h2>
+            <table class="w-full table-auto border border-gray-300 text-sm">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="px-4 py-2">Factura</th>
+                        <th class="px-4 py-2">Fecha</th>
+                        <th class="px-4 py-2">Cliente</th>
+                        <th class="px-4 py-2">Centro</th>
+                        <th class="px-4 py-2">Total</th>
+                        <th class="px-4 py-2">Pagado</th>
+                        <th class="px-4 py-2">Saldo</th>
+                        <th class="px-4 py-2">Último Pago</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in grupo.datos %}
+                        <tr class="border-t">
+                            <td class="px-4 py-2">{{ item.factura.numero_factura }}</td>
+                            <td class="px-4 py-2">{{ item.factura.fecha_emision.strftime('%Y-%m-%d') }}</td>
+                            <td class="px-4 py-2">{{ item.factura.cliente.nombre }}</td>
+                            <td class="px-4 py-2">{{ item.factura.contrato.centro.codigo_centro }}</td>
+                            <td class="px-4 py-2">${{ '%.2f'|format(item.factura.total) }}</td>
+                            <td class="px-4 py-2">${{ '%.2f'|format(item.total_pagado) }}</td>
+                            <td class="px-4 py-2">${{ '%.2f'|format(item.saldo) }}</td>
+                            <td class="px-4 py-2">
+                                {% if item.fecha_ultimo_pago %}
+                                    {{ item.fecha_ultimo_pago.strftime('%Y-%m-%d') }} ({{ item.ultima_parcialidad }})
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

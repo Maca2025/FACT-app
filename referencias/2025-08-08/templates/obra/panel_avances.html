@@ -1,0 +1,75 @@
+{% set pantalla = 'panel_avances' %}
+{% extends 'base.html' %}
+
+{% block title %}Panel de Avances{% endblock %}
+
+{% block content %}
+<div class="w-full mt-10 bg-white shadow-md rounded-xl p-8 overflow-auto">
+  <h1 class="text-2xl font-bold text-center mb-6">Panel de Avances</h1>
+  <h2 class="text-xl text-center mb-6">{{ contrato.nombre }}</h2>
+
+  {% if fechas %}
+  <div class="overflow-x-auto">
+    <table class="table-auto w-full border border-gray-300 text-sm text-right table-fixed">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="border px-1 py-2 w-16 text-left sticky left-0 bg-gray-200 z-10">Clave</th>
+          <th class="border px-1 py-2 text-left sticky left-16 bg-gray-200 z-10 w-80" style="transform: translateX(-8px);">Descripción</th>
+          <th class="border px-1 py-2 w-16 text-left sticky left-[20rem] bg-gray-200 z-10">Un</th>
+          <th class="border px-1 py-2 w-24 sticky left-[24rem] bg-gray-200 z-10">Cant</th>
+          <th class="border px-1 py-2 w-24 sticky left-[30rem] bg-gray-200 z-10">Acum</th>
+          <th class="border px-1 py-2 w-24 sticky left-[36rem] bg-gray-200 z-10">Cant Pend</th>
+          <th class="border px-1 py-2 w-20 sticky left-[42rem] bg-gray-200 z-10">PU</th>
+          <th class="border px-1 py-2 w-32 sticky left-[46rem] bg-gray-200 z-10">Subt Cat</th>
+          <th class="border px-1 py-2 w-32 sticky left-[54rem] bg-gray-200 z-10">Subt Avanz</th>
+          <th class="border px-1 py-2 w-32 sticky left-[62rem] bg-gray-200 z-10">Subt Pend</th>
+          {% for f in fechas %}
+            <th class="border px-1 py-2 w-20">{{ f.strftime('%d/%m/%Y') }}</th>
+            <th class="border px-1 py-2 w-24">Subt.</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for partida, data in partidas.items() %}
+        <tr class="bg-gray-100 font-semibold">
+          <td class="border px-1 py-2 text-left sticky left-0 bg-gray-100 z-0" colspan="{{ 10 + fechas|length * 2 }}">
+            Partida {{ partida }} — {{ data.nombre_partida }}
+          </td>
+        </tr>
+        {% for info in data.conceptos %}
+        <tr>
+          <td class="border px-1 py-1 sticky left-0 bg-white font-mono">{{ info.concepto.clave|default('') }}</td>
+          <td class="border px-1 py-1 sticky left-12 bg-white">{{ info.concepto.descripcion|default('') }}</td>
+          <td class="border px-1 py-1 sticky left-[20rem] bg-white">{{ info.concepto.unidad|default('') }}</td>
+          <td class="border px-1 py-1 sticky left-[24rem] bg-white">{{ "{:,.2f}".format(info.concepto.cantidad|default(0)) }}</td>
+          <td class="border px-1 py-1 sticky left-[30rem] bg-white">{{ "{:,.2f}".format(info.acumulado|default(0)) }}</td>
+          <td class="border px-1 py-1 sticky left-[36rem] bg-white">{{ "{:,.2f}".format(info.cantidad_pendiente|default(0)) }}</td>
+          <td class="border px-1 py-1 sticky left-[42rem] bg-white">${{ "{:,.2f}".format(info.concepto.precio_unitario|default(0)) }}</td>
+          <td class="border px-1 py-1 sticky left-[46rem] bg-white">${{ "{:,.2f}".format(info.subtotal_catalogo|default(0)) }}</td>
+          <td class="border px-1 py-1 sticky left-[54rem] bg-white">${{ "{:,.2f}".format(info.subtotal_avanzado|default(0)) }}</td>
+          <td class="border px-1 py-1 sticky left-[62rem] bg-white">${{ "{:,.2f}".format(info.subtotal_pendiente|default(0)) }}</td>
+          {% for f in fechas %}
+            <td class="border px-1 py-1 bg-blue-50">{{ "{:,.2f}".format(info.cantidades_por_fecha[f]|default(0)) }}</td>
+            <td class="border px-1 py-1">${{ "{:,.2f}".format(info.subtotales_por_fecha[f]|default(0)) }}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr class="border-t font-bold bg-gray-100">
+          <td class="border px-1 text-left" colspan="9">Totales Subt.:</td>
+          <td class="border px-1 py-3"></td>
+          {% for f in fechas %}
+            <td class="border px-1 py-3 bg-blue-50"></td>
+            <td class="border px-1 py-3">${{ "{:,.2f}".format(totales_por_fecha[f]|default(0)) }}</td>
+          {% endfor %}
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  {% else %}
+  <p class="text-center text-gray-600">No hay avances registrados para este contrato.</p>
+  {% endif %}
+</div>
+{% endblock %}

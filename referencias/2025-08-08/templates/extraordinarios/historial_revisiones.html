@@ -1,0 +1,72 @@
+{% set pantalla = 'historial_revisiones' %}
+{% extends 'base.html' %}
+
+{% block title %}Historial de Revisiones{% endblock %}
+
+{% block content %}
+<div class="max-w-screen-xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h1 class="text-2xl font-bold text-center mb-6">Historial de Revisiones</h1>
+
+    <table class="min-w-full text-sm border border-gray-300 mb-6">
+        <thead class="bg-gray-200 text-left">
+            <tr>
+                <th class="px-3 py-2">Revisión</th>
+                <th class="px-3 py-2">Fecha</th>
+                <th class="px-3 py-2">PU</th>
+                <th class="px-3 py-2 w-96">Descripción</th>
+                <th class="px-3 py-2">Comentario</th>
+                <th class="px-3 py-2">Estado</th>
+                <th class="px-3 py-2">PDF</th>
+                <th class="px-3 py-2">Acuse</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rev in revisiones %}
+            <tr class="border-t">
+                <td class="px-3 py-2">{{ rev.numero_revision }}</td>
+                <td class="px-3 py-2">{{ rev.fecha_registro }}</td>
+                <td class="px-3 py-2">${{ "{:,.2f}".format(rev.precio_unitario) }}</td>
+                <td class="px-3 py-2 whitespace-pre-wrap break-words w-96">{{ rev.descripcion }}</td>
+                <td class="px-3 py-2">{{ rev.comentario }}</td>
+                <td class="px-3 py-2">{{ rev.estado }}</td>
+                <td class="px-3 py-2">
+                    {% if rev.archivo_pdf %}
+                        <a href="{{ url_for('static', filename='uploads/extraordinarios/' ~ rev.archivo_pdf) }}" class="text-blue-700" target="_blank">Ver PDF</a>
+                    {% elif rev.id %}
+                        <a href="{{ url_for('extraordinarios.subir_pdf_revision', contrato_id=contrato_id, clave=clave, revision_id=rev.id) }}" class="text-red-600">Subir PDF</a>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td class="px-3 py-2">
+                    {% if rev.acuse_pdf %}
+                        <a href="{{ url_for('static', filename='uploads/extraordinarios/' ~ rev.acuse_pdf) }}" class="text-blue-700" target="_blank">Ver Acuse</a>
+                    {% elif rev.id %}
+                        <a href="{{ url_for('extraordinarios.subir_acuse_revision', contrato_id=contrato_id, clave=clave, revision_id=rev.id) }}" class="text-red-600">Subir Acuse</a>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="text-center">
+        <a href="{{ url_for('extraordinarios.nuevo_reg_extra', contrato_id=contrato_id, clave=clave) }}"
+           class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+           + Nuevo Registro
+        </a>
+    </div>
+
+    <div class="text-left mt-6">
+        <a href="{{ url_for('extraordinarios.listado_extraordinarios', contrato_id=contrato_id) }}" class="text-blue-700 underline">
+            ← Volver al Listado de Extraordinarios
+        </a>
+    </div>
+
+    <div class="mt-6 text-right text-xs text-gray-400">
+        pantalla: {{ pantalla }}
+    </div>
+</div>
+{% endblock %}

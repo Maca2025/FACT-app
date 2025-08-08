@@ -1,0 +1,98 @@
+{% set pantalla = 'catalogo_base' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-screen-xl mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">Lista de Tareas</h1>
+
+    <div class="mb-4 text-right">
+        <a href="{{ url_for('kanban.tablero_kanban') }}"
+           class="inline-block bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">
+            ← Volver al tablero Kanban
+        </a>
+    </div>
+
+    <!-- Filtros -->
+    <form method="get" class="mb-6 flex flex-wrap gap-4 items-end">
+        <div>
+            <label for="estado" class="block text-sm font-medium">Estado:</label>
+            <select name="estado" id="estado" class="border rounded px-3 py-1">
+                <option value="">Todos</option>
+                <option value="Pendiente" {% if filtro_estado == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                <option value="En proceso" {% if filtro_estado == 'En proceso' %}selected{% endif %}>En proceso</option>
+                <option value="Completado" {% if filtro_estado == 'Completado' %}selected{% endif %}>Completado</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="prioridad" class="block text-sm font-medium">Prioridad:</label>
+            <select name="prioridad" id="prioridad" class="border rounded px-3 py-1">
+                <option value="">Todas</option>
+                <option value="Alta" {% if filtro_prioridad == 'Alta' %}selected{% endif %}>Alta 🔥</option>
+                <option value="Media" {% if filtro_prioridad == 'Media' %}selected{% endif %}>Media ⚠️</option>
+                <option value="Baja" {% if filtro_prioridad == 'Baja' %}selected{% endif %}>Baja 🐢</option>
+            </select>
+        </div>
+
+        <div>
+            <button type="submit"
+                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-1">
+                Aplicar filtros
+            </button>
+        </div>
+    </form>
+
+    <!-- Tabla de tareas -->
+    <div class="overflow-x-auto bg-white rounded-xl shadow">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50 text-left text-sm font-semibold">
+                <tr>
+                    <th class="px-4 py-3">Título</th>
+                    <th class="px-4 py-3">Descripción</th>
+                    <th class="px-4 py-3">Estado</th>
+                    <th class="px-4 py-3">Prioridad</th>
+                    <th class="px-4 py-3">Creación</th>
+                    <th class="px-4 py-3">Eliminar</th>
+                </tr>
+            </thead>
+            <tbody class="text-sm text-gray-800 divide-y divide-gray-100">
+                {% for tarea in tareas %}
+                <tr>
+                    <td class="px-4 py-2 font-bold">{{ tarea.titulo }}</td>
+                    <td class="px-4 py-2">{{ tarea.descripcion }}</td>
+                    <td class="px-4 py-2">{{ tarea.estado }}</td>
+                    <td class="px-4 py-2">
+                        {% if tarea.prioridad == 'Alta' %}
+                            <span class="text-red-600 font-semibold">Alta 🔥</span>
+                        {% elif tarea.prioridad == 'Media' %}
+                            <span class="text-yellow-600 font-semibold">Media ⚠️</span>
+                        {% elif tarea.prioridad == 'Baja' %}
+                            <span class="text-green-600 font-semibold">Baja 🐢</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-2 text-gray-500">{{ tarea.fecha_creacion }}</td>
+                    <td class="px-4 py-2">
+                        <form action="{{ url_for('kanban.eliminar_tarea', tarea_id=tarea.id) }}" method="POST"
+                              onsubmit="return confirm('¿Eliminar esta tarea?');">
+                            <button type="submit" class="text-red-600 text-sm hover:underline">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if tareas|length == 0 %}
+                <tr>
+                    <td colspan="6" class="px-4 py-6 text-center text-gray-400 italic">
+                        No se encontraron tareas con esos filtros.
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Identificador de pantalla -->
+<div class="fixed bottom-2 right-4 text-xs text-gray-400">
+    pantalla: <strong>lista_tareas</strong>
+</div>
+{% endblock %}

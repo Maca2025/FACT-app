@@ -1,0 +1,40 @@
+{% set pantalla = 'historial_factura' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10 bg-white shadow-md rounded-xl p-6">
+    <a href="{{ url_for('reporte_pagos_opciones') }}" class="text-blue-600 underline block mb-4">&larr; Volver al reporte</a>
+    <h1 class="text-2xl font-bold mb-4">Historial de Pagos - Factura {{ factura.numero_factura or "Sin número" }}</h1>
+
+    {% if historial %}
+        <table class="w-full text-sm text-left border border-gray-200">
+            <thead class="bg-gray-200 text-gray-700">
+                <tr>
+                    <th class="p-2">Fecha</th>
+                    <th class="p-2">Monto</th>
+                    <th class="p-2">Método</th>
+                    <th class="p-2">Referencia</th>
+                    <th class="p-2">Parcialidad</th>
+                    <th class="p-2">Saldo pendiente</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pago in historial %}
+                <tr class="border-t">
+                    <td class="p-2">{{ pago.fecha.strftime('%d/%m/%Y') }}</td>
+                    <td class="p-2">${{ "%.2f"|format(pago.monto) }}</td>
+                    <td class="p-2">{{ pago.metodo }}</td>
+                    <td class="p-2">{{ pago.referencia }}</td>
+                    <td class="p-2">{{ pago.parcialidad }}</td>
+                    <td class="p-2">${{ "%.2f"|format(pago.saldo_pendiente) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p class="mt-4 text-right font-semibold">Saldo Final Pendiente: ${{ "%.2f"|format(saldo_final) }}</p>
+    {% else %}
+        <p class="text-gray-600 mt-4">Esta factura aún no tiene pagos registrados.</p>
+    {% endif %}
+</div>
+{% endblock %}

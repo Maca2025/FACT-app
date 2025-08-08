@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <h1 class="text-2xl font-bold text-center mb-6">Total Estimado por Partida</h1>
+
+    <div class="overflow-auto border rounded-lg shadow">
+        <table class="min-w-full table-auto text-sm text-right">
+            <thead class="bg-gray-100 text-gray-700">
+                <tr>
+                    <th class="px-4 py-2 text-left" colspan="2">Clave / Descripción</th>
+                    <th class="px-4 py-2">Unidad</th>
+                    <th class="px-4 py-2">PU</th>
+                    <th class="px-4 py-2">Cantidad Estimada</th>
+                    <th class="px-4 py-2">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for partida, conceptos in conceptos_por_partida.items() %}
+                    <tr class="bg-gray-200 border-t">
+                        <td colspan="6" class="px-4 py-2 text-left font-semibold">{{ partida }}</td>
+                    </tr>
+                    {% for concepto in conceptos %}
+                    <tr class="border-t">
+                        <td class="px-4 py-2 text-left">{{ concepto.clave }}</td>
+                        <td class="px-4 py-2 text-left w-[25rem]">{{ concepto.descripcion }}</td>
+                        <td class="px-4 py-2">{{ concepto.unidad }}</td>
+                        <td class="px-4 py-2">{{ concepto.precio_unitario | moneda }}</td>
+                        <td class="px-4 py-2">{{ concepto.cantidad_estimacion | round(2) }}</td>
+                        <td class="px-4 py-2 font-semibold">{{ concepto.subtotal_estimacion | moneda }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="border-t bg-gray-100">
+                        <td colspan="5" class="px-4 py-2 text-right font-semibold">Subtotal de {{ partida }}</td>
+                        <td class="px-4 py-2 font-bold text-green-700">{{ subtotales_por_partida[partida] | moneda }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-right mt-6 text-sm">
+        <p>Subtotal general: <strong>{{ subtotal_general | moneda }}</strong></p>
+        <p>IVA (16%): <strong>{{ iva | moneda }}</strong></p>
+        <p>Total con IVA: <strong>{{ total_con_iva | moneda }}</strong></p>
+    </div>
+
+    <div class="mt-6 flex justify-between items-center">
+        <a href="{{ url_for('estimaciones_nuevo.crear_estimacion', contrato_id=contrato_id) }}"
+           class="text-blue-600 hover:underline">← Volver a seleccionar conceptos</a>
+
+        <form method="POST" action="{{ url_for('estimaciones_nuevo.guardar_estimacion') }}">
+            {% for partida, conceptos in conceptos_por_partida.items() %}
+                {% for concepto in conceptos %}
+                    <input type="hidden" name="clave[]" value="{{ concepto.clave }}">
+                    <input type="hidden" name="cantidad_{{ concepto.clave }}" value="{{ concepto.cantidad_estimacion }}">
+                {% endfor %}
+            {% endfor %}
+            <input type="hidden" name="contrato_id" value="{{ contrato_id }}">
+            <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded shadow">
+                Continuar a Amortización →
+            </button>
+        </form>
+    </div>
+
+    <div class="text-xs text-gray-400 text-right mt-6">
+        Plantilla: suma_conceptos.html
+    </div>
+</div>
+{% endblock %}

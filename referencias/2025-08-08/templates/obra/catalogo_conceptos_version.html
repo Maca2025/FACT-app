@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% set pantalla = 'catalogos' %}
+
+{% block title %}Catálogo de Conceptos - Versión {{ version.nombre }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h1 class="text-2xl font-bold text-center mb-6">Catálogo de Conceptos</h1>
+    <h2 class="text-xl font-semibold text-center mb-4">{{ contrato.nombre }} — {{ version.nombre }}</h2>
+
+    {% if partidas %}
+        {% for partida in partidas %}
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2">
+                    Partida {{ partida.partida }} — {{ partida.nombre_partida }}
+                    <span class="text-sm font-normal ml-4">
+                        Subtotal: $
+                        {% if partida.subtotal_partida is defined and partida.subtotal_partida is not none %}
+                            {{ "{:,.2f}".format(partida.subtotal_partida) }}
+                        {% else %}
+                            0.00
+                        {% endif %}
+                    </span>
+                </h3>
+
+                <table class="w-full text-sm border border-gray-300">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="px-2 py-1">Clave</th>
+                            <th class="px-2 py-1">Descripción</th>
+                            <th class="px-2 py-1">Unidad</th>
+                            <th class="px-2 py-1 text-right">Precio Unitario</th>
+                            <th class="px-2 py-1 text-right">Cantidad</th>
+                            <th class="px-2 py-1 text-right">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for concepto in partida.conceptos %}
+                            <tr class="border-t">
+                                <td class="px-2 py-1">{{ concepto.concepto }}</td>
+                                <td class="px-2 py-1">{{ concepto.descripcion }}</td>
+                                <td class="px-2 py-1">{{ concepto.unidad }}</td>
+                                <td class="px-2 py-1 text-right">
+                                    {% if concepto.precio_unitario is defined and concepto.precio_unitario is not none %}
+                                        ${{ "{:,.2f}".format(concepto.precio_unitario) }}
+                                    {% else %}
+                                        $0.00
+                                    {% endif %}
+                                </td>
+                                <td class="px-2 py-1 text-right">{{ concepto.cantidad }}</td>
+                                <td class="px-2 py-1 text-right">
+                                    {% if concepto.subtotal is defined and concepto.subtotal is not none %}
+                                        ${{ "{:,.2f}".format(concepto.subtotal) }}
+                                    {% else %}
+                                        $0.00
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+
+        <div class="text-right font-semibold text-lg border-t pt-3">
+            Total (sin IVA): $
+            {% if total_catalogo is defined and total_catalogo is not none %}
+                {{ "{:,.2f}".format(total_catalogo) }}
+            {% else %}
+                0.00
+            {% endif %}<br>
+
+            IVA (16%): $
+            {% if iva is defined and iva is not none %}
+                {{ "{:,.2f}".format(iva) }}
+            {% else %}
+                0.00
+            {% endif %}<br>
+
+            Total con IVA: $
+            {% if total_con_iva is defined and total_con_iva is not none %}
+                {{ "{:,.2f}".format(total_con_iva) }}
+            {% else %}
+                0.00
+            {% endif %}
+        </div>
+    {% else %}
+        <p class="text-center text-gray-600">No hay conceptos cargados para esta versión.</p>
+    {% endif %}
+
+    <div class="text-center mt-6">
+        <a href="{{ url_for('catalogos.catalogos_por_contrato', contrato_id=contrato.id) }}" class="text-sm text-blue-700 underline">← Volver al Historial de Catálogos</a>
+    </div>
+</div>
+
+<!-- Identificador de pantalla -->
+<div class="fixed bottom-2 right-4 text-xs text-gray-400">
+    pantalla: <strong>{{ pantalla }}</strong>
+</div>
+{% endblock %}

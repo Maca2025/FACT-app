@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}FACT-app{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800" x-data="{}">
+
+    <!-- Botón flotante al Kanban -->
+    <div class="fixed top-4 right-4 z-50">
+        <a href="{{ url_for('kanban.tablero_kanban') }}" target="_blank"
+           class="bg-blue-600 text-white text-sm px-4 py-2 rounded shadow hover:bg-blue-700">
+            🗂 Ir al Kanban
+        </a>
+    </div>
+
+    <!-- ✅ Se eliminó el max-w-6xl y se permitió ancho completo -->
+    <div class="w-full px-6">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    {% if pantalla %}
+    <div class="fixed bottom-2 right-4 text-xs text-gray-400">
+        pantalla: <strong>{{ pantalla }}</strong>
+    </div>
+    {% endif %}
+
+    {% block scripts %}
+    {% endblock %}
+
+    <!-- ✅ Alpine.js desde unpkg -->
+    <script src="https://unpkg.com/alpinejs@3.13.5" defer></script>
+</body>
+</html>

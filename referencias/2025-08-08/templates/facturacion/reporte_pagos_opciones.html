@@ -1,0 +1,57 @@
+{% set pantalla = 'reporte_pagos_opciones' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <a href="{{ url_for('index') }}" class="text-blue-600 underline mb-4 block">&larr; Volver al inicio</a>
+    <h1 class="text-2xl font-bold mb-6">Opciones de Reporte de Pagos</h1>
+
+    <form method="POST" class="space-y-6">
+
+        <div>
+            <label class="block text-sm font-semibold mb-1">Empresa:</label>
+            <select name="empresa_id" class="w-full border border-gray-300 rounded px-3 py-2">
+                <option value="">-- Todas --</option>
+                {% for empresa in empresas %}
+                    <option value="{{ empresa.id }}">{{ empresa.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold mb-1">Centro:</label>
+            <select name="centro_id" class="w-full border border-gray-300 rounded px-3 py-2">
+                <option value="">-- Todos --</option>
+                {% for centro in centros %}
+                    <option value="{{ centro.id }}">{{ centro.codigo_centro }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold mb-1">Selecciona tipo de reporte:</label>
+            <select name="opcion" required class="w-full border border-gray-300 rounded px-3 py-2">
+                <option value="todas">Todas las facturas</option>
+                <option value="pagadas">Solo pagadas</option>
+                <option value="pendientes">Solo pendientes</option>
+                <option value="por_centro">Por centro</option>
+                <option value="una">Una factura</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-semibold mb-1">Factura específica (solo para opción individual):</label>
+            <select name="factura_id" class="w-full border border-gray-300 rounded px-3 py-2">
+                <option value="">-- Selecciona una factura --</option>
+                {% for factura in facturas %}
+                    <option value="{{ factura.id }}">{{ factura.numero_factura }} - {{ factura.cliente.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition">
+            Generar Reporte
+        </button>
+    </form>
+</div>
+{% endblock %}

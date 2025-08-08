@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Agregar Conceptos - Estimación {{ estimacion.numero_estimacion }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-10">
+    <h1 class="text-2xl font-bold text-center mb-6">Agregar Conceptos a Estimación #{{ estimacion.numero_estimacion }}</h1>
+
+    <form method="POST">
+        <div class="overflow-auto border rounded-lg shadow">
+            <table class="min-w-full table-auto text-sm text-right">
+                <thead class="bg-gray-100 text-gray-700">
+                    <tr>
+                        <th class="px-4 py-2 text-left">Seleccionar</th>
+                        <th class="px-4 py-2 text-left">Clave</th>
+                        <th class="px-4 py-2 text-left">Descripción</th>
+                        <th class="px-4 py-2">Unidad</th>
+                        <th class="px-4 py-2">PU</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in conceptos_disponibles %}
+                    <tr class="border-t">
+                        <td class="px-4 py-2 text-center">
+                            <input type="checkbox" name="clave[]" value="{{ c.clave }}" class="form-checkbox">
+                        </td>
+                        <td class="px-4 py-2 text-left">{{ c.clave }}</td>
+                        <td class="px-4 py-2 text-left w-[25rem]">{{ c.descripcion }}</td>
+                        <td class="px-4 py-2">{{ c.unidad }}</td>
+                        <td class="px-4 py-2">${{ '%.2f'|format(c.precio_unitario) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 text-right">
+            <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded shadow">
+                Continuar →
+            </button>
+        </div>
+    </form>
+
+    <div class="mt-6 text-center">
+        <a href="{{ url_for('estimaciones_nuevo.detalle_estimacion', estimacion_id=estimacion.id) }}"
+           class="text-sm text-blue-700 underline">
+            ← Volver a la estimación
+        </a>
+    </div>
+</div>
+{% endblock %}

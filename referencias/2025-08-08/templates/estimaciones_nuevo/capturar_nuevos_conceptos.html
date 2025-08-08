@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-10">
+    <h1 class="text-2xl font-bold text-center mb-6">Agregar Nuevos Conceptos a Estimación {{ estimacion.numero_estimacion }}</h1>
+
+    <form method="POST" action="{{ url_for('estimaciones_nuevo.guardar_nuevos_conceptos', estimacion_id=estimacion.id) }}">
+        <div class="overflow-auto border rounded-lg shadow">
+            <table class="min-w-full table-auto text-sm text-right">
+                <thead class="bg-gray-100 text-gray-700">
+                    <tr>
+                        <th class="px-4 py-2 text-left">Clave</th>
+                        <th class="px-4 py-2 text-left">Descripción</th>
+                        <th class="px-4 py-2">Unidad</th>
+                        <th class="px-4 py-2">PU</th>
+                        <th class="px-4 py-2">Cantidad</th>
+                        <th class="px-4 py-2">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in conceptos %}
+                    <tr class="border-t">
+                        <td class="px-4 py-2 text-left">{{ c.clave }}</td>
+                        <td class="px-4 py-2 text-left w-[25rem]">{{ c.descripcion }}</td>
+                        <td class="px-4 py-2">{{ c.unidad }}</td>
+                        <td class="px-4 py-2">${{ '%.2f'|format(c.precio_unitario) }}</td>
+                        <td class="px-4 py-2">
+                            <input type="number" step="any" name="cantidad_{{ c.clave }}" class="w-24 border rounded px-2 py-1 text-right">
+                            <input type="hidden" name="clave[]" value="{{ c.clave }}">
+                        </td>
+                        <td class="px-4 py-2 text-gray-400">auto</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 text-right">
+            <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded shadow">
+                Guardar Nuevos Conceptos →
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

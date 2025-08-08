@@ -1,0 +1,46 @@
+{% set pantalla = 'catalogo_base' %}
+{% extends 'base.html' %}
+
+{% block title %}Catálogos Cargados{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h1 class="text-2xl font-bold text-center mb-6">Contratos con Catálogos Cargados</h1>
+
+    {% if contratos %}
+    <table class="w-full text-sm border border-gray-300 table-auto">
+        <thead class="bg-gray-200 text-left">
+            <tr>
+                <th class="px-3 py-2">Contrato</th>
+                <th class="px-3 py-2">Cliente</th>
+                <th class="px-3 py-2">Centro</th>
+                <th class="px-3 py-2">Cantidad de Catálogos</th>
+                <th class="px-3 py-2">Último Comentario</th>
+                <th class="px-3 py-2">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contrato in contratos %}
+                {% set versiones = contrato.catalogos|sort(attribute='fecha_subida', reverse=true) %}
+                {% if versiones %}
+                <tr class="hover:bg-gray-50 border-t">
+                    <td class="px-3 py-2">{{ contrato.nombre }}</td>
+                    <td class="px-3 py-2">{{ contrato.cliente.nombre }}</td>
+                    <td class="px-3 py-2">{{ contrato.centro.centro }}</td>
+                    <td class="px-3 py-2">{{ contrato.catalogos|length }}</td>
+                    <td class="px-3 py-2">{{ versiones[0].comentario or '-' }}</td>
+                    <td class="px-3 py-2">
+                        <a href="{{ url_for('catalogos.catalogos_por_contrato', contrato_id=contrato.id) }}" class="text-blue-700 underline">
+                            Ver Catálogos
+                        </a>
+                    </td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p class="text-center text-gray-600">No hay contratos con catálogos disponibles.</p>
+    {% endif %}
+</div>
+{% endblock %}

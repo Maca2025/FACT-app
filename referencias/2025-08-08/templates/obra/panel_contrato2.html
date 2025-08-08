@@ -1,0 +1,128 @@
+{% set pantalla = 'panel_contrato' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h1 class="text-2xl font-bold text-center mb-6">Panel de Obra</h1>
+    <h2 class="text-xl font-semibold text-center mb-2">{{ contrato.nombre }}</h2>
+
+    <!-- Botón para editar el contrato -->
+    <div class="text-center mb-6">
+        <a href="{{ url_for('contratos_obra.editar_contrato', contrato_id=contrato.id) }}"
+           class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-semibold shadow">
+            Editar Contrato
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 border p-4 rounded-lg mb-6">
+        <div>
+            <p><strong>Empresa:</strong> {{ contrato.empresa.nombre }}</p>
+            <p><strong>Centro:</strong> {{ contrato.centro.centro }}</p>
+            <p><strong>Duración:</strong> {{ contrato.duracion }} días</p>
+            <p><strong>Anticipo:</strong> {{ contrato.porcentaje_anticipo or 0 }}%</p>
+            <p><strong>Fecha Inicio:</strong> {{ contrato.fecha_inicio.strftime('%Y-%m-%d') if contrato.fecha_inicio else 'No definida' }}</p>
+            <p><strong>Fecha Cierre:</strong> {{ contrato.fecha_fin.strftime('%Y-%m-%d') if contrato.fecha_fin else 'No definida' }}</p>
+        </div>
+        <div>
+            <p><strong>Cliente:</strong> {{ contrato.cliente.nombre }}</p>
+            <p><strong>Contrato:</strong> {{ contrato.contrato }}</p>
+            <p><strong>Monto Total:</strong> ${{ '{:,.2f}'.format(contrato.monto_total or 0) }}</p>
+            <p><strong>Estado:</strong> {{ contrato.estado|capitalize }}</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div>
+            <h2 class="text-lg font-semibold mb-2">Catálogo</h2>
+            <ul class="list-disc ml-5 text-blue-700 mb-6">
+                <li>
+                    <a href="{{ url_for('catalogos.ver_catalogo_base', contrato_id=contrato.id) }}" class="underline text-purple-700">
+                        Ver Catálogo Base Acumulado
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('catalogos.catalogos_por_contrato', contrato_id=contrato.id) }}" class="underline">
+                        Resumen de Catálogos ({{ contrato.catalogos|length }})
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('catalogos.subir_catalogo', contrato_id=contrato.id) }}" class="underline text-green-700">
+                        Subir Nuevo Catálogo
+                    </a>
+                </li>
+            </ul>
+
+            <h2 class="text-lg font-semibold mb-2">Avances</h2>
+            <ul class="list-disc ml-5 text-blue-700">
+                <li>
+                    <a href="{{ url_for('avances.panel_avances', contrato_id=contrato.id) }}" class="underline text-purple-700">
+                        Ver Avances
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('avances.seleccionar_conceptos', contrato_id=contrato.id) }}" class="underline">
+                        Registrar Nuevo Avance
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('avances.historial_avances', contrato_id=contrato.id) }}" class="underline">
+                        Ver Historial de Avances
+                    </a>
+                </li>
+                <li class="mt-2">
+                    <a href="{{ url_for('extraordinarios.listado_extraordinarios', contrato_id=contrato.id) }}" class="underline text-yellow-700">
+                        Conceptos Extraordinarios
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div>
+            <h2 class="text-lg font-semibold mb-2">Prefiniquitos</h2>
+            <ul class="list-disc ml-5 text-blue-700">
+
+                <li>
+                    <a href="{{ url_for('prefiniquitos.historial_prefiniquitos', contrato_id=contrato.id) }}" class="underline text-purple-700">
+                        Ver Historial de Prefiniquitos
+                    </a>
+                </li>
+                <li class="mt-2">
+                    <a href="{{ url_for('comparativos.comparativo_prefiniquito_avances', contrato_id=contrato.id) }}" class="underline">
+                        Ver Comparativo (Prefiniquito con Avances)
+                    </a>
+                </li>
+            </ul>
+
+            <h2 class="text-lg font-semibold mt-6 mb-2">Estimaciones</h2>
+            <ul class="list-disc ml-5 text-blue-700">
+                <li>
+                    <a href="{{ url_for('estimaciones_nuevo.crear_estimacion', contrato_id=contrato.id) }}" class="underline text-green-700">
+                        Crear Nueva Estimación
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    {% if contrato.estado == 'abierto' %}
+    <div class="text-center">
+        <form method="post" action="{{ url_for('contratos_obra.cerrar_contrato', contrato_id=contrato.id) }}">
+            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                Cerrar Contrato
+            </button>
+        </form>
+    </div>
+    {% endif %}
+
+    <div class="text-center mt-6">
+        <a href="{{ url_for('contratos_obra.obras_abiertas') }}" class="text-sm text-blue-700 underline">
+            ← Volver a Obras
+        </a>
+    </div>
+</div>
+
+<!-- Identificador de pantalla -->
+<div class="fixed bottom-2 right-4 text-xs text-gray-400">
+    pantalla: <strong>{{ pantalla }}</strong>
+</div>
+{% endblock %}

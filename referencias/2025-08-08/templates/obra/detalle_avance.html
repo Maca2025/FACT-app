@@ -1,0 +1,57 @@
+{% set pantalla = 'detalle_avance' %}
+{% extends 'base.html' %}
+
+{% block title %}Detalle del Avance - {{ contrato.nombre }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h1 class="text-2xl font-bold text-center mb-6">Detalle del Avance</h1>
+    <h2 class="text-xl font-semibold text-center mb-4">{{ contrato.nombre }}</h2>
+
+    <div class="mb-6 text-center text-sm text-gray-700">
+        <p><strong>Fecha del Avance:</strong> {{ avance.fecha.strftime('%d/%m/%Y') }}</p>
+    </div>
+
+    {% if detalles %}
+    <div class="overflow-auto">
+        <table class="w-full table-auto border-collapse text-sm">
+            <thead class="bg-gray-200 text-gray-800">
+                <tr>
+                    <th class="border px-3 py-2">Partida</th>
+                    <th class="border px-3 py-2">Nombre Partida</th>
+                    <th class="border px-3 py-2">Concepto</th>
+                    <th class="border px-3 py-2">Unidad</th>
+                    <th class="border px-3 py-2">Cantidad</th>
+                    <th class="border px-3 py-2 text-right">Precio Unitario</th>
+                    <th class="border px-3 py-2 text-right">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in detalles %}
+                <tr class="hover:bg-gray-50">
+                    <td class="border px-3 py-2">{{ item.partida }}</td>
+                    <td class="border px-3 py-2">{{ item.nombre_partida }}</td>
+                    <td class="border px-3 py-2">
+                        <div class="font-semibold">{{ item.clave }}</div>
+                        <div class="text-xs text-gray-700 whitespace-normal">{{ item.descripcion }}</div>
+                    </td>
+                    <td class="border px-3 py-2">{{ item.unidad }}</td>
+                    <td class="border px-3 py-2 text-right">{{ "%.2f"|format(item.cantidad) }}</td>
+                    <td class="border px-3 py-2 text-right">{{ item.precio_unitario|moneda }}</td>
+                    <td class="border px-3 py-2 text-right">{{ item.subtotal|moneda }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-center text-gray-600">Este avance no tiene conceptos registrados.</p>
+    {% endif %}
+
+    <div class="text-center mt-6">
+        <a href="{{ url_for('avances.historial_avances', contrato_id=contrato.id) }}" class="text-blue-700 underline">
+            ← Volver al Historial
+        </a>
+    </div>
+</div>
+{% endblock %}
