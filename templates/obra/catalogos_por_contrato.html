@@ -1,0 +1,68 @@
+{% set pantalla = 'catalogos_por_contrato' %}
+{% extends 'base.html' %}
+
+{% block title %}Historial de Catálogos{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h1 class="text-2xl font-bold text-center mb-6">Historial de Catálogos</h1>
+    <h2 class="text-xl font-semibold text-center mb-4">{{ contrato.nombre }}</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mb-4">
+                {% for category, message in messages %}
+                    <div class="p-2 text-sm rounded {{ 'bg-green-100 text-green-800' if category == 'success' else 'bg-red-100 text-red-800' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% if versiones %}
+    <table class="w-full text-sm border border-gray-300 mt-4 table-fixed align-top">
+        <thead class="bg-gray-200">
+            <tr>
+                <th class="px-2 py-1 w-12">ID</th>
+                <th class="px-2 py-1 w-20">Tipo</th>
+                <th class="px-2 py-1 w-48">Nombre</th>
+                <th class="px-2 py-1 w-28">Fecha de Subida</th>
+                <th class="px-2 py-1 w-96">Comentario</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for version in versiones %}
+            <tr class="border-t align-top">
+                <td class="px-2 py-1 align-top">{{ version.id }}</td>
+                <td class="px-2 py-1 align-top">{{ version.tipo }}</td>
+                <td class="px-2 py-1 align-top text-blue-700 underline">
+                    <a href="{{ url_for('catalogos.ver_conceptos_version', version_id=version.id) }}">
+                        {{ version.nombre }}
+                    </a>
+                    <form method="POST" action="{{ url_for('catalogos.eliminar_catalogo', version_id=version.id) }}" class="inline">
+                        <button type="submit" class="text-red-600 text-xs ml-2 hover:underline" onclick="return confirm('¿Eliminar este catálogo? Esta acción también eliminará el prefiniquito relacionado.')">
+                            🗑 Eliminar
+                        </button>
+                    </form>
+                </td>
+                <td class="px-2 py-1 align-top">{{ version.fecha_subida.strftime('%d/%m/%Y') }}</td>
+                <td class="px-2 py-1 align-top">
+                    <form method="POST" action="{{ url_for('catalogos.actualizar_comentario', version_id=version.id) }}" class="space-y-1 md:flex md:space-x-2 md:space-y-0">
+                        <input type="text" name="comentario" value="{{ version.comentario or '' }}" class="border rounded px-2 py-1 w-full text-xs" />
+                        <button type="submit" class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 whitespace-nowrap">Guardar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-center text-gray-600">No hay catálogos cargados para este contrato.</p>
+    {% endif %}
+
+    <div class="text-center mt-6">
+        <a href="{{ url_for('contratos_obra.panel_contrato', contrato_id=contrato.id) }}" class="text-sm text-blue-700 underline">← Volver al Panel del Contrato</a>
+    </div>
+</div>
+{% endblock %}

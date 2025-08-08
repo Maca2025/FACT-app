@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-md mx-auto p-6 bg-white rounded-xl shadow mt-8">
+    <h1 class="text-2xl font-bold mb-4">Nueva Tarea</h1>
+    <form method="POST">
+        <div class="mb-4">
+            <label class="block font-semibold mb-1" for="titulo">Título</label>
+            <input type="text" id="titulo" name="titulo" required
+                   class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300">
+        </div>
+
+        <div class="mb-4">
+            <label class="block font-semibold mb-1" for="descripcion">Descripción</label>
+            <textarea id="descripcion" name="descripcion" rows="3"
+                      class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"></textarea>
+        </div>
+
+        <div class="mb-4">
+            <label class="block font-semibold mb-1" for="estado">Estado</label>
+            <select id="estado" name="estado"
+                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300">
+                <option value="Pendiente">Pendiente</option>
+                <option value="En proceso">En proceso</option>
+                <option value="Completado">Completado</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label class="block font-semibold mb-1" for="prioridad">Prioridad</label>
+            <select id="prioridad" name="prioridad"
+                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300">
+                <option value="Alta">Alta</option>
+                <option value="Media" selected>Media</option>
+                <option value="Baja">Baja</option>
+            </select>
+        </div>
+
+        <div class="flex justify-end">
+            <button type="submit"
+                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Guardar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-6 py-8">
+    <h1 class="text-2xl font-bold mb-6">Nuevo Concepto Extraordinario</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Clave del concepto</label>
+            <input type="text" name="clave" value="{{ clave }}" readonly
+                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100">
+        </div>
+
+        <div class="mb-4">
+            <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>
+            <textarea name="descripcion" rows="4" required
+                      class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">{{ descripcion or '' }}</textarea>
+        </div>
+
+        <div class="mb-4">
+            <label for="precio_unitario" class="block text-sm font-medium text-gray-700">Precio Unitario</label>
+            <input type="number" step="0.01" min="0" name="precio_unitario" value="{{ ultimo_pu }}"
+                   required class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        </div>
+
+        <div class="mb-4">
+            <label for="comentario" class="block text-sm font-medium text-gray-700">Comentario</label>
+            <input type="text" name="comentario"
+                   class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        </div>
+
+        <div class="mb-4">
+            <label for="estado" class="block text-sm font-medium text-gray-700">Estado</label>
+            <select name="estado" class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm">
+                <option value="elaboracion" {% if estado_actual == 'elaboracion' %}selected{% endif %}>E - Elaboración</option>
+                <option value="revision" {% if estado_actual == 'revision' %}selected{% endif %}>R - Revisión</option>
+                <option value="aprobado" {% if estado_actual == 'aprobado' %}selected{% endif %}>A - Aprobado</option>
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label for="archivo_pdf" class="block text-sm font-medium text-gray-700">Archivo PDF del concepto (opcional)</label>
+            <input type="file" name="archivo_pdf" accept="application/pdf"
+                   class="mt-1 block w-full text-sm text-gray-600">
+        </div>
+
+        <div class="mb-6">
+            <label for="acuse_pdf" class="block text-sm font-medium text-gray-700">Acuse de recepción del cliente (opcional)</label>
+            <input type="file" name="acuse_pdf" accept="application/pdf"
+                   class="mt-1 block w-full text-sm text-gray-600">
+        </div>
+
+        <div class="flex justify-end">
+            <button type="submit"
+                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Guardar Concepto
+            </button>
+        </div>
+    </form>
+
+    <div class="mt-6">
+        <a href="{{ url_for('extraordinarios.listado_extraordinarios', contrato_id=contrato.id) }}"
+           class="text-sm text-gray-600 hover:underline">← Volver al listado</a>
+    </div>
+</div>
+{% endblock %}

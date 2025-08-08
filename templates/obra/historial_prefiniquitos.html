@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto mt-8 p-4 bg-white rounded shadow">
+    <h2 class="text-2xl font-semibold mb-6">Historial de Prefiniquitos - {{ contrato.nombre }}</h2>
+
+    {% if prefiniquitos %}
+        <table class="min-w-full table-auto border border-gray-300">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-4 py-2 text-left">ID</th>
+                    <th class="px-4 py-2 text-left">Fecha</th>
+                    <th class="px-4 py-2 text-right">Total Original</th>
+                    <th class="px-4 py-2 text-right">Total Actualizado</th>
+                    <th class="px-4 py-2 text-right">Diferencia</th>
+                    <th class="px-4 py-2 text-center">Detalle</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in prefiniquitos %}
+                    <tr class="border-t">
+                        <td class="px-4 py-2">{{ p.id }}</td>
+                        <td class="px-4 py-2">{{ p.fecha_generacion.strftime('%d/%m/%Y') }}</td>
+                        <td class="px-4 py-2 text-right">${{ "{:,.2f}".format(p.total_original) }}</td>
+                        <td class="px-4 py-2 text-right">${{ "{:,.2f}".format(p.total_actualizado) }}</td>
+                        <td class="px-4 py-2 text-right">${{ "{:,.2f}".format(p.diferencia_total) }}</td>
+                        <td class="px-4 py-2 text-center">
+                            <a href="{{ url_for('catalogos.ver_prefiniquito_detalle', prefiniquito_id=p.id) }}"
+                               class="text-blue-600 hover:underline">Ver detalle</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No se encontraron prefiniquitos para este contrato.</p>
+    {% endif %}
+</div>
+
+<div class="text-center mt-6">
+    <a href="{{ url_for('contratos_obra.panel_contrato', contrato_id=contrato.id) }}"
+       class="text-blue-700 text-sm underline">← Volver al panel del contrato</a>
+</div>
+{% endblock %}

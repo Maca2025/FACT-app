@@ -1,0 +1,56 @@
+{% set pantalla = 'panel_contrato' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <h1 class="text-2xl font-bold mb-4">Panel del Contrato</h1>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6 p-6">
+    <h2 class="text-xl font-semibold mb-4">{{ contrato.nombre }}</h2>
+
+    <p><strong>Empresa:</strong> {{ contrato.empresa.nombre }}</p>
+    <p><strong>Cliente:</strong> {{ contrato.cliente.nombre }}</p>
+    <p><strong>Centro:</strong> {{ contrato.centro.nombre }}</p>
+    <p><strong>Inicio:</strong> {{ contrato.fecha_inicio.strftime('%d/%m/%Y') if contrato.fecha_inicio else 'N/A' }}</p>
+    <p><strong>Fin estimada:</strong> {{ contrato.fecha_fin.strftime('%d/%m/%Y') if contrato.fecha_fin else 'N/A' }}</p>
+
+    <hr class="my-4">
+
+    <p><strong>Subtotal sin IVA:</strong> {{ totales.subtotal_contrato | moneda }}</p>
+    <p><strong>IVA (16%):</strong> {{ totales.iva_contrato | moneda }}</p>
+    <p><strong>Total con IVA:</strong> {{ totales.total_contrato | moneda }}</p>
+
+    <hr class="my-4">
+
+    <p><strong>% Anticipo:</strong> {{ contrato.porcentaje_anticipo or 0 }}%</p>
+    <p><strong>Anticipo sin IVA:</strong> {{ totales.anticipo_sin_iva | moneda }}</p>
+    <p><strong>IVA del Anticipo:</strong> {{ totales.iva_anticipo | moneda }}</p>
+    <p><strong>Total del Anticipo:</strong> {{ totales.total_anticipo | moneda }}</p>
+  </div>
+
+  <div class="bg-white shadow sm:rounded-lg p-6">
+    <h3 class="text-lg font-semibold mb-4">Acciones Disponibles</h3>
+    <ul class="list-disc pl-6 space-y-2">
+      <li><a href="{{ url_for('catalogos.ver_catalogo_base', contrato_id=contrato.id) }}" class="text-blue-600 hover:underline">Ver Catálogo Base Acumulado</a></li>
+      <li><a href="{{ url_for('catalogos.catalogos_por_contrato', contrato_id=contrato.id) }}" class="text-blue-600 hover:underline">Resumen de Catálogos</a></li>
+      <li><a href="{{ url_for('catalogos.subir_catalogo', contrato_id=contrato.id) }}" class="text-blue-600 hover:underline">Subir Nuevo Catálogo</a></li>
+      <li><a href="{{ url_for('avances.panel_avances', contrato_id=contrato.id) }}" class="text-blue-600 hover:underline">Panel de Avances</a></li>
+      <li><a href="{{ url_for('avances.seleccionar_conceptos', contrato_id=contrato.id) }}" class="text-blue-600 hover:underline">Registrar Nuevo Avance</a></li>
+      <li><a href="{{ url_for('avances.historial_avances', contrato_id=contrato.id) }}" class="text-blue-600 hover:underline">Ver Historial de Avances</a></li>
+      <li><a href="{{ url_for('extraordinarios.listado_extraordinarios', contrato_id=contrato.id) }}" class="text-blue-600 hover:underline">Conceptos Extraordinarios</a></li>
+      {% if prefiniquito %}
+      <li><a href="{{ url_for('prefiniquitos.detalle_prefiniquito', prefiniquito_id=prefiniquito.id) }}" class="text-blue-600 hover:underline">Prefiniquito</a></li>
+      {% endif %}
+      <li><a href="{{ url_for('comparativos.comparativo_prefiniquito_avances', contrato_id=contrato.id) }}" class="text-blue-600 hover:underline">Comparativo Prefiniquito / Avances</a></li>
+      <li><a href="{{ url_for('estimaciones_nuevo.crear_estimacion', contrato_id=contrato.id) }}" class="text-blue-600 hover:underline">Crear Nueva Estimación</a></li>
+      <div class="mt-6">
+        <h2 class="text-lg font-semibold mb-2">Estimaciones</h2>
+        <a href="{{ url_for('estimaciones_nuevo.listado_estimaciones', contrato_id=contrato.id) }}"
+           class="inline-block px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+            📑 Ver Estimaciones
+        </a>
+      </div>    
+    </ul>
+  </div>
+</div>
+{% endblock %}

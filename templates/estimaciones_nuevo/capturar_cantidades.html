@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-10">
+    <h1 class="text-2xl font-bold text-center mb-6">Editar Cantidades Estimadas</h1>
+
+    <form method="POST" action="{{ url_for('estimaciones_nuevo.suma_conceptos') }}?contrato_id={{ contrato.id }}">
+        <div class="overflow-auto border rounded-lg shadow">
+            <table class="min-w-full table-auto text-sm text-right">
+                <thead class="bg-gray-100 text-gray-700">
+                    <tr>
+                        <th class="px-4 py-2 text-left">Clave</th>
+                        <th class="px-4 py-2 text-left">Descripción</th>
+                        <th class="px-4 py-2">Unidad</th>
+                        <th class="px-4 py-2">PU</th>
+                        <th class="px-4 py-2">Cantidad</th>
+                        <th class="px-4 py-2">Subtotal</th>
+                        <th class="px-4 py-2">Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in conceptos %}
+                    <tr class="border-t">
+                        <td class="px-4 py-2 text-left">
+                            <input type="hidden" name="clave[]" value="{{ c.clave }}">
+                            {{ c.clave }}
+                        </td>
+                        <td class="px-4 py-2 text-left">{{ c.descripcion }}</td>
+                        <td class="px-4 py-2">{{ c.unidad }}</td>
+                        <td class="px-4 py-2">${{ '%.2f'|format(c.precio_unitario) }}</td>
+                        <td class="px-4 py-2">
+                            <input type="number" name="cantidad_{{ c.clave }}" step="0.01" min="-999999" class="w-24 px-2 py-1 border rounded text-right" value="{{ c.cantidad or 0 }}">
+                        </td>
+                        <td class="px-4 py-2">-</td>
+                        <td class="px-4 py-2 text-center">
+                            <a href="{{ url_for('estimaciones_nuevo.eliminar_concepto_estimacion', estimacion_id=contrato.id, clave_concepto=c.clave) }}"
+                               class="text-red-600 hover:underline">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 text-right">
+            <button type="submit"
+                class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded shadow">
+                🗃 Guardar cambios y continuar →
+            </button>
+        </div>
+    </form>
+
+    <div class="text-xs text-gray-400 text-right mt-6">
+        Plantilla: capturar_cantidades.html
+    </div>
+</div>
+{% endblock %}

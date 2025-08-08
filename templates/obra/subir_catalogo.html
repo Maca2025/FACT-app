@@ -1,0 +1,40 @@
+{% set pantalla = 'subir_catalogo' %}
+{% extends 'base.html' %}
+
+{% block title %}Subir Catálogo{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h1 class="text-2xl font-bold text-center mb-6">Subir Catálogo</h1>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        <div>
+            <label for="contrato_id" class="block font-medium">Contrato:</label>
+            <select name="contrato_id" id="contrato_id" required class="mt-1 block w-full border border-gray-300 rounded px-3 py-2">
+                <option value="">Selecciona un contrato</option>
+                {% for contrato in contratos %}
+                <option value="{{ contrato.id }}" {% if contrato.id == contrato_id_param|int %}selected{% endif %}>
+                    {{ contrato.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="archivo" class="block font-medium">Archivo Excel (.xlsx):</label>
+            <input type="file" name="archivo" id="archivo" required accept=".xlsx" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label for="comentario" class="block font-medium">Comentario:</label>
+            <textarea name="comentario" id="comentario" rows="3" placeholder="Opcional. Describe los cambios de esta versión" class="mt-1 block w-full border border-gray-300 rounded px-3 py-2"></textarea>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                Subir Catálogo
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

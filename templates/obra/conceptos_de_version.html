@@ -1,0 +1,45 @@
+{% set pantalla = 'conceptos_de_version' %}
+{% extends 'base.html' %}
+
+{% block title %}Conceptos - {{ version.nombre }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <a href="{{ url_for('catalogos.catalogos_por_contrato', contrato_id=version.contrato_id) }}" class="text-blue-600 underline mb-4 block">
+        &larr; Volver al resumen
+    </a>
+
+    <h1 class="text-2xl font-bold mb-6">Conceptos de {{ version.nombre }} ({{ version.tipo|capitalize }})</h1>
+
+    {% if conceptos %}
+        <table class="min-w-full text-sm border">
+            <thead class="bg-gray-200">
+                <tr>
+                    <th class="px-4 py-2 text-left">Partida</th>
+                    <th class="px-4 py-2 text-left">Nombre Partida</th>
+                    <th class="px-4 py-2 text-left">Concepto</th>
+                    <th class="px-4 py-2 text-left">Descripción</th>
+                    <th class="px-4 py-2 text-right">Precio Unitario</th>
+                    <th class="px-4 py-2 text-right">Cantidad</th>
+                    <th class="px-4 py-2 text-right">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in conceptos %}
+                <tr class="border-t hover:bg-gray-50">
+                    <td class="px-4 py-2">{{ c.partida }}</td>
+                    <td class="px-4 py-2">{{ c.nombre_partida }}</td>
+                    <td class="px-4 py-2">{{ c.concepto }}</td>
+                    <td class="px-4 py-2">{{ c.descripcion }}</td>
+                    <td class="px-4 py-2 text-right">${{ "%.2f"|format(c.precio_unitario) }}</td>
+                    <td class="px-4 py-2 text-right">{{ "%.2f"|format(c.cantidad) }}</td>
+                    <td class="px-4 py-2 text-right font-semibold">${{ "%.2f"|format(c.subtotal) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-gray-600">No hay conceptos registrados para esta versión.</p>
+    {% endif %}
+</div>
+{% endblock %}

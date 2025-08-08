@@ -1,0 +1,86 @@
+{% set pantalla = 'contratos' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto mt-10">
+
+    <div class="bg-white shadow-md rounded-xl p-8 mb-10">
+        <h2 class="text-2xl font-bold mb-6">Registrar Nuevo Contrato</h2>
+        <form method="POST" class="space-y-4">
+            <!-- ... campos previos ... -->
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- ... campos previos ... -->
+
+                <div>
+                    <label for="porcentaje_anticipo" class="block font-semibold mb-1">% Anticipo</label>
+                    <input type="number" name="porcentaje_anticipo" step="0.01" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ contrato.porcentaje_anticipo if contrato else '' }}">
+                </div>
+            </div>
+
+            <!-- NUEVO BLOQUE: Deducciones recurrentes -->
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold mb-2">Deducciones recurrentes</h3>
+                <div id="deducciones-container">
+                    <div class="flex space-x-4 mb-2 deduccion-item">
+                        <input type="text" name="deduccion_nombre[]" placeholder="Nombre de deducción"
+                               class="w-1/2 border border-gray-300 rounded px-3 py-2">
+                        <input type="number" step="0.01" name="deduccion_porcentaje[]" placeholder="%"
+                               class="w-1/4 border border-gray-300 rounded px-3 py-2">
+                    </div>
+                </div>
+                <button type="button" onclick="agregarDeduccion()"
+                        class="text-sm text-blue-600 hover:underline mt-2">
+                    + Agregar otra deducción
+                </button>
+            </div>
+
+            <script>
+                function agregarDeduccion() {
+                    const container = document.getElementById('deducciones-container');
+                    const nueva = document.createElement('div');
+                    nueva.className = 'flex space-x-4 mb-2 deduccion-item';
+                    nueva.innerHTML = `
+                        <input type="text" name="deduccion_nombre[]" placeholder="Nombre de deducción"
+                               class="w-1/2 border border-gray-300 rounded px-3 py-2">
+                        <input type="number" step="0.01" name="deduccion_porcentaje[]" placeholder="%"
+                               class="w-1/4 border border-gray-300 rounded px-3 py-2">
+                    `;
+                    container.appendChild(nueva);
+                }
+            </script>
+
+            <div>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    Guardar Contrato
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white shadow-md rounded-xl p-8">
+        <h2 class="text-xl font-bold mb-4">Contratos Registrados por Empresa</h2>
+
+        {% for grupo in contratos_por_empresa %}
+            <h3 class="text-lg font-semibold mt-6 mb-2">{{ grupo.empresa }}</h3>
+            <ul class="space-y-2 list-disc list-inside mb-6">
+                {% for contrato in grupo.contratos %}
+                    <li>
+                        <strong>{{ contrato.nombre }}</strong> —
+                        Código: {{ contrato.contrato }} —
+                        Cliente: {{ contrato.cliente.nombre }} —
+                        Centro: {{ contrato.centro.codigo_centro }} —
+                        Monto Total: ${{ "%.2f"|format(contrato.monto_total or 0) }} —
+                        Anticipo: {{ contrato.porcentaje_anticipo or 0 }}%
+                        (=${{ "%.2f"|format(contrato.anticipo_total or 0) }})
+                        —
+                        <a href="{{ url_for('catalogos.catalogos_por_contrato', contrato_id=contrato.id) }}" class="text-blue-600 underline hover:text-blue-800">
+                            Ver catálogos
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

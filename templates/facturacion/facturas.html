@@ -1,0 +1,202 @@
+{% set pantalla = 'facturas' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <a href="{{ url_for('index') }}" class="text-blue-600 underline mb-4 block">&larr; Volver al inicio</a>
+    <h1 class="text-2xl font-bold mb-6">Registrar Factura</h1>
+
+    <form method="POST" class="space-y-4">
+        <div>
+            <label class="block font-semibold">Cliente:</label>
+            <select name="cliente_id" required class="w-full border border-gray-300 rounded px-3 py-2">
+                {% for cliente in clientes %}
+                    <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="block font-semibold">Empresa:</label>
+            <select name="empresa_id" id="empresa_id" required class="w-full border border-gray-300 rounded px-3 py-2">
+                <option value="">Seleccione una empresa</option>
+                {% for empresa in empresas %}
+                    <option value="{{ empresa.id }}">{{ empresa.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="block font-semibold">Contrato:</label>
+            <select name="contrato_id" id="contrato_id" required class="w-full border border-gray-300 rounded px-3 py-2">
+                <!-- Se llena dinámicamente -->
+            </select>
+        </div>
+
+        <div>
+            <label class="block font-semibold">Número de Factura:</label>
+            <input type="text" name="numero_factura" id="numero_factura" required class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Fecha de Emisión:</label>
+            <input type="date" name="fecha_emision" required class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Tipo de Documento:</label>
+            <select name="tipo_documento" required class="w-full border border-gray-300 rounded px-3 py-2">
+                <option value="Ingreso">Factura de Ingreso</option>
+                <option value="Nota de Crédito">Nota de Crédito</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block font-semibold">UUID:</label>
+            <input type="text" name="uuid" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Monto sin IVA:</label>
+            <input type="number" name="monto_sin_iva" step="0.01" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">IVA (16%):</label>
+            <input type="number" name="iva" step="0.01" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Monto Total:</label>
+            <input type="number" name="monto_total" step="0.01" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Estado:</label>
+            <select name="estado" required class="w-full border border-gray-300 rounded px-3 py-2">
+                <option value="Pendiente">Pendiente</option>
+                <option value="Pagada">Pagada</option>
+                <option value="Cancelada">Cancelada</option>
+            </select>
+        </div>
+
+        <div id="aviso_cambios" class="hidden text-yellow-700 bg-yellow-100 border border-yellow-400 p-3 rounded">
+            ⚠️ Los valores de la factura no coinciden con los del contrato. Puedes continuar, pero asegúrate que sean correctos.
+        </div>
+
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Guardar Factura
+        </button>
+    </form>
+</div>
+
+<div class="max-w-4xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h2 class="text-xl font-bold mb-4">Facturas Registradas</h2>
+    <ul class="space-y-2 list-disc list-inside">
+        {% for factura in facturas %}
+            <li>
+                <strong>{{ factura.numero_factura }}</strong> —
+                {{ factura.tipo_documento }} —
+                {{ factura.total }} —
+                {{ factura.estado }} —
+                Contrato: {{ factura.contrato.nombre }} —
+                Centro: {{ factura.contrato.centro.codigo_centro }}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Datos JSON para uso con JavaScript -->
+<script type="application/json" id="contratos_data">
+    {{ contratos_serializados|tojson }}
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function actualizarContratos() {
+        const empresaId = document.getElementById("empresa_id").value;
+        const contratos = JSON.parse(document.getElementById("contratos_data").textContent);
+        const contratoSelect = document.getElementById("contrato_id");
+
+        contratoSelect.innerHTML = ""; // Limpiar opciones
+
+        const contratosFiltrados = contratos.filter(c => c.empresa_id == empresaId);
+        contratosFiltrados.forEach(c => {
+            const option = document.createElement("option");
+            option.value = c.id;
+            option.textContent = `${c.nombre} (${c.cliente})`;
+            contratoSelect.appendChild(option);
+        });
+
+        actualizarMontosDesdeContrato();
+        actualizarNumeroFactura();
+    }
+
+    function actualizarMontosDesdeContrato() {
+        const contratoId = document.getElementById("contrato_id").value;
+        const contratos = JSON.parse(document.getElementById("contratos_data").textContent);
+        const contrato = contratos.find(c => c.id == contratoId);
+
+        if (contrato) {
+            document.querySelector('input[name="monto_sin_iva"]').value = contrato.monto_sin_iva || '';
+            document.querySelector('input[name="iva"]').value = contrato.iva || '';
+            document.querySelector('input[name="monto_total"]').value = contrato.monto_total || '';
+            ocultarAdvertencia();
+        }
+    }
+
+    function verificarCambios() {
+        const contratoId = document.getElementById("contrato_id").value;
+        const contratos = JSON.parse(document.getElementById("contratos_data").textContent);
+        const contrato = contratos.find(c => c.id == contratoId);
+
+        if (contrato) {
+            const monto_sin_iva = parseFloat(document.querySelector('input[name="monto_sin_iva"]').value) || 0;
+            const iva = parseFloat(document.querySelector('input[name="iva"]').value) || 0;
+            const monto_total = parseFloat(document.querySelector('input[name="monto_total"]').value) || 0;
+
+            const cambios = (
+                monto_sin_iva !== parseFloat(contrato.monto_sin_iva || 0) ||
+                iva !== parseFloat(contrato.iva || 0) ||
+                monto_total !== parseFloat(contrato.monto_total || 0)
+            );
+
+            if (cambios) {
+                document.getElementById('aviso_cambios').classList.remove('hidden');
+            } else {
+                ocultarAdvertencia();
+            }
+        }
+    }
+
+    function ocultarAdvertencia() {
+        document.getElementById('aviso_cambios').classList.add('hidden');
+    }
+
+    function actualizarNumeroFactura() {
+        const empresaId = document.getElementById("empresa_id").value;
+        const numeroInput = document.getElementById("numero_factura");
+
+        if (empresaId) {
+            fetch(`/api/siguiente_numero?empresa_id=${empresaId}`)
+                .then(res => res.json())
+                .then(data => {
+                    numeroInput.value = data.siguiente_numero || "";
+                });
+        } else {
+            numeroInput.value = "";
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById("empresa_id").addEventListener("change", actualizarContratos);
+        document.getElementById("contrato_id").addEventListener("change", actualizarMontosDesdeContrato);
+        document.querySelector('input[name="monto_sin_iva"]').addEventListener('input', verificarCambios);
+        document.querySelector('input[name="iva"]').addEventListener('input', verificarCambios);
+        document.querySelector('input[name="monto_total"]').addEventListener('input', verificarCambios);
+
+        actualizarContratos(); // Inicial
+    });
+</script>
+{% endblock %}

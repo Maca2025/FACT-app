@@ -1,0 +1,42 @@
+{% set pantalla = 'index' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8 space-y-10">
+
+    <h1 class="text-2xl font-bold text-center mb-6">Sistema de Facturación y Administración de Obra</h1>
+
+    <!-- ✅ Bloque de prueba para verificar Tailwind -->
+    <div class="bg-red-500 text-white p-4 rounded-lg text-center">
+        Tailwind está funcionando 🎉
+    </div>
+
+    <!-- Sección de Obras -->
+    <div class="mb-10">
+        <h2 class="text-xl font-bold mb-4">Obras</h2>
+        <ul class="list-disc list-inside space-y-2 text-blue-700">
+            <li><a href="{{ url_for('contratos_obra.obras_abiertas') }}" class="underline">Obras Abiertas</a></li>
+            <li><a href="{{ url_for('contratos_obra.obras_cerradas') }}" class="underline">Obras Cerradas</a></li>
+        </ul>
+    </div>
+
+    <!-- Sección de Facturación -->
+    <div>
+        <h2 class="text-xl font-semibold mb-4 border-b pb-2 border-gray-300">FACTURACIÓN</h2>
+        <ul class="list-disc list-inside space-y-2 text-blue-700">
+            <li><a href="{{ url_for('clientes.clientes') }}" class="underline">Registro de Clientes</a></li>
+            <li><a href="{{ url_for('centros.centros') }}" class="underline">Registro de Centros</a></li>
+            <li><a href="{{ url_for('contratos.contratos') }}" class="underline">Registro de Contratos</a></li>
+            <!-- Nuevo enlace para editar contratos -->
+            <li><a href="{{ url_for('contratos_obra.editar_contrato', contrato_id=1) }}" class="underline text-yellow-700">
+                Editar Contrato (Ejemplo: ID=1)
+            </a></li>
+            <li><a href="{{ url_for('facturas.facturas') }}" class="underline">Registro de Facturas</a></li>
+            <li><a href="{{ url_for('pagos.pagos') }}" class="underline">Registro de Pagos</a></li>
+            <li><a href="{{ url_for('reportesfact.reporte_facturas') }}" class="underline">Reporte de Facturas</a></li>
+            <li><a href="{{ url_for('reportesfact.reporte_pagos_opciones') }}" class="underline">Reporte de Pagos</a></li>
+        </ul>
+    </div>
+
+</div>
+{% endblock %}

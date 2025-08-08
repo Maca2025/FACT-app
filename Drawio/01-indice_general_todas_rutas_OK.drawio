@@ -1,0 +1,73 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" version="27.1.6">
+  <diagram name="Índice General - Todas las Rutas" id="0">
+    <mxGraphModel dx="1148" dy="556" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="10" value="Índice General&#xa;[index.html]&#xa;Ruta en: app.py" style="shape=rectangle;whiteSpace=wrap;html=1;fillColor=#C8E6C9;" parent="1" vertex="1">
+          <mxGeometry x="40" y="380" width="260" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="20" value="Obras Abiertas&#xa;[vista_obra_abierta.html]&#xa;GET /obras/abiertas&#xa;url_for(&#39;contratos_obra.obras_abiertas&#39;)&#xa;Ruta en: obra/contratos_obra.py" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF3E0;" parent="1" vertex="1">
+          <mxGeometry x="340" y="20" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="21" value="Obras Cerradas&#xa;[vista_obra_cerrada.html]&#xa;GET /obras/cerradas&#xa;url_for(&#39;contratos_obra.obras_cerradas&#39;)&#xa;Ruta en: obra/contratos_obra.py" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF3E0;" parent="1" vertex="1">
+          <mxGeometry x="340" y="100" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="22" value="Clientes&#xa;[clientes.html]&#xa;GET /clientes&#xa;url_for(&#39;clientes.clientes&#39;)&#xa;Ruta en: base/clientes.py" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF3E0;" parent="1" vertex="1">
+          <mxGeometry x="340" y="180" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="23" value="Centros&#xa;[centros.html]&#xa;GET /centros&#xa;url_for(&#39;centros.centros&#39;)&#xa;Ruta en: base/centros.py" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF3E0;" parent="1" vertex="1">
+          <mxGeometry x="340" y="260" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="24" value="Contratos&#xa;[contratos.html]&#xa;GET /contratos&#xa;url_for(&#39;contratos.contratos&#39;)&#xa;Ruta en: base/contratos.py" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF3E0;" parent="1" vertex="1">
+          <mxGeometry x="340" y="340" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="25" value="Editar Contrato&#xa;[editar_contrato.html]&#xa;GET /obras/editar/&lt;id&gt;&#xa;url_for(&#39;contratos_obra.editar_contrato&#39;, contrato_id=1)&#xa;Ruta en: obra/contratos_obra.py" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFE082;" parent="1" vertex="1">
+          <mxGeometry x="340" y="420" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="26" value="Facturas&#xa;[facturas.html]&#xa;GET /facturas&#xa;url_for(&#39;facturas.facturas&#39;)&#xa;Ruta en: base/facturas.py" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF3E0;" parent="1" vertex="1">
+          <mxGeometry x="340" y="500" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="27" value="Pagos&#xa;[pagos.html]&#xa;GET /pagos&#xa;url_for(&#39;pagos.pagos&#39;)&#xa;Ruta en: base/pagos.py" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFF3E0;" parent="1" vertex="1">
+          <mxGeometry x="340" y="580" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="28" value="Reporte de Facturas&#xa;[reporte_facturas.html]&#xa;GET /reportes/facturas&#xa;url_for(&#39;reportesfact.reporte_facturas&#39;)&#xa;Ruta en: base/reportesfact.py" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E8F5E9;" parent="1" vertex="1">
+          <mxGeometry x="340" y="660" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="29" value="Reporte de Pagos&#xa;[reporte_pagos.html]&#xa;GET /reportes/pagos&#xa;url_for(&#39;reportesfact.reporte_pagos_opciones&#39;)&#xa;Ruta en: base/reportesfact.py" style="ellipse;whiteSpace=wrap;html=1;fillColor=#E8F5E9;" parent="1" vertex="1">
+          <mxGeometry x="340" y="740" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="e10-20" style="endArrow=block;" parent="1" source="10" target="20" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10-21" style="endArrow=block;" parent="1" source="10" target="21" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10-22" style="endArrow=block;" parent="1" source="10" target="22" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10-23" style="endArrow=block;" parent="1" source="10" target="23" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10-24" style="endArrow=block;" parent="1" source="10" target="24" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10-25" style="endArrow=block;" parent="1" source="10" target="25" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10-26" style="endArrow=block;" parent="1" source="10" target="26" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10-27" style="endArrow=block;" parent="1" source="10" target="27" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10-28" style="endArrow=block;" parent="1" source="10" target="28" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10-29" style="endArrow=block;" parent="1" source="10" target="29" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

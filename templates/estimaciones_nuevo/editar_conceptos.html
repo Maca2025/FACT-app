@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Editar Conceptos Estimación{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h2 class="text-2xl font-bold mb-6">Editar conceptos - Estimación #{{ estimacion.numero_estimacion }}</h2>
+
+    <table class="w-full table-auto text-sm border border-gray-300">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="px-3 py-2 text-left">Clave</th>
+                <th class="px-3 py-2 text-left">Partida</th>
+                <th class="px-3 py-2 text-left">Descripción</th>
+                <th class="px-3 py-2 text-right">Unidad</th>
+                <th class="px-3 py-2 text-right">Cantidad</th>
+                <th class="px-3 py-2 text-right">PU</th>
+                <th class="px-3 py-2 text-right">Subtotal</th>
+                <th class="px-3 py-2 text-center">Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in detalles %}
+            <tr class="border-t">
+                <td class="px-3 py-2">{{ c.clave_concepto }}</td>
+                <td class="px-3 py-2">{{ c.nombre_partida }}</td>
+                <td class="px-3 py-2">{{ c.descripcion }}</td>
+                <td class="px-3 py-2 text-right">{{ c.unidad }}</td>
+                <td class="px-3 py-2 text-right">{{ c.cantidad_estimacion }}</td>
+                <td class="px-3 py-2 text-right">${{ '{:,.2f}'.format(c.precio_unitario) }}</td>
+                <td class="px-3 py-2 text-right">${{ '{:,.2f}'.format(c.subtotal) }}</td>
+                <td class="px-3 py-2 text-center">
+                    <a href="{{ url_for('estimaciones_nuevo.eliminar_concepto_estimacion', estimacion_id=estimacion.id, clave_concepto=c.clave_concepto) }}"
+                       class="text-red-600 hover:underline"
+                       onclick="return confirm('¿Eliminar este concepto de la estimación?');">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="mt-6 flex justify-between">
+        <a href="{{ url_for('estimaciones_nuevo.agregar_conceptos_estimacion', estimacion_id=estimacion.id) }}"
+           class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">+ Agregar Conceptos</a>
+        <a href="{{ url_for('estimaciones_nuevo.ver_amortizacion', estimacion_id=estimacion.id) }}"
+           class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Continuar</a>
+    </div>
+</div>
+
+<!-- Identificador de pantalla -->
+<div class="text-xs text-gray-500 text-right mt-2 mr-4 italic">Pantalla: editar_conceptos.html</div>
+{% endblock %}

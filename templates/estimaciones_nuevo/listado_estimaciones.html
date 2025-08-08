@@ -1,0 +1,55 @@
+{% set pantalla = 'listado_estimaciones' %}
+{% extends 'base.html' %}
+{% block title %}Listado de Estimaciones{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h2 class="text-2xl font-bold mb-6">Estimaciones - Contrato: {{ contrato.clave }} - {{ contrato.nombre }}</h2>
+
+    <table class="w-full text-sm table-auto border border-gray-300">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="px-3 py-2 text-left">#</th>
+                <th class="px-3 py-2 text-left">Fecha</th>
+                <th class="px-3 py-2 text-left">Periodo</th>
+                <th class="px-3 py-2 text-right">Subtotal</th>
+                <th class="px-3 py-2 text-right">IVA</th>
+                <th class="px-3 py-2 text-right">Total c/IVA</th>
+                <th class="px-3 py-2 text-right">Amortización</th>
+                <th class="px-3 py-2 text-right">Total a Cobrar</th>
+                <th class="px-3 py-2 text-left">Observaciones</th>
+                <th class="px-3 py-2 text-left">Estado</th>
+                <th class="px-3 py-2 text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in resumen %}
+            {% set est = item.estimacion %}
+            <tr class="border-t">
+                <td class="px-3 py-2">{{ est.numero_estimacion }}</td>
+                <td class="px-3 py-2">{{ est.fecha.strftime('%d/%m/%Y') }}</td>
+                <td class="px-3 py-2">
+                    {{ est.fecha_inicio_trab_est.strftime('%d/%m/%Y') if est.fecha_inicio_trab_est else '-' }} -
+                    {{ est.fecha_fin_trab_est.strftime('%d/%m/%Y') if est.fecha_fin_trab_est else '-' }}
+                </td>
+                <td class="px-3 py-2 text-right">${{ '{:,.2f}'.format(est.subtotal or 0) }}</td>
+                <td class="px-3 py-2 text-right">${{ '{:,.2f}'.format(est.iva or 0) }}</td>
+                <td class="px-3 py-2 text-right">${{ '{:,.2f}'.format(est.total_con_iva or 0) }}</td>
+                <td class="px-3 py-2 text-right">${{ '{:,.2f}'.format(est.amortizacion or 0) }}</td>
+                <td class="px-3 py-2 text-right">${{ '{:,.2f}'.format(est.total_a_cobrar or 0) }}</td>
+                <td class="px-3 py-2">{{ est.observaciones or '' }}</td>
+                <td class="px-3 py-2">
+                    <span class="px-2 py-1 rounded text-white bg-{{ item.color }}-500">{{ item.estado }}</span>
+                </td>
+                <td class="px-3 py-2 text-center space-x-2">
+                    <a href="{{ url_for('estimaciones_nuevo.editar_conceptos_estimacion', estimacion_id=est.id) }}" class="text-blue-600 hover:underline">Ver</a>
+                    <a href="{{ url_for('estimaciones_nuevo.eliminar_estimacion', estimacion_id=est.id) }}"
+                       class="text-red-600 hover:underline"
+                       onclick="return confirm('¿Estás seguro de que deseas eliminar esta estimación?');">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
