@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-10">
+    <h1 class="text-2xl font-bold text-center mb-6">Total Estimado</h1>
+
+    <table class="min-w-full text-sm border">
+        <thead class="bg-gray-100 text-gray-700 text-right">
+            <tr>
+                <th class="text-left px-4 py-2">Clave</th>
+                <th class="text-left px-4 py-2">Descripción</th>
+                <th class="px-4 py-2">Unidad</th>
+                <th class="px-4 py-2">PU</th>
+                <th class="px-4 py-2">Cantidad</th>
+                <th class="px-4 py-2">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in conceptos %}
+            <tr class="border-t text-right">
+                <td class="text-left px-4 py-2">{{ c.clave }}</td>
+                <td class="text-left px-4 py-2">{{ c.descripcion }}</td>
+                <td class="px-4 py-2">{{ c.unidad }}</td>
+                <td class="px-4 py-2">${{ '%.2f'|format(c.precio_unitario) }}</td>
+                <td class="px-4 py-2">{{ c.cantidad }}</td>
+                <td class="px-4 py-2 font-semibold">${{ '%.2f'|format(c.subtotal) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="text-right mt-6 text-lg">
+        <p>Subtotal: <strong>${{ '%.2f'|format(subtotal) }}</strong></p>
+        <p>IVA (16%): <strong>${{ '%.2f'|format(iva) }}</strong></p>
+        <p class="text-xl mt-2">Total: <strong>${{ '%.2f'|format(total) }}</strong></p>
+    </div>
+</div>
+{% endblock %}

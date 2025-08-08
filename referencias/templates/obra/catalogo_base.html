@@ -1,0 +1,94 @@
+{% set pantalla = 'catalogo_base' %}
+{% extends 'base.html' %}
+
+{% block title %}Catálogo Base Acumulado{% endblock %}
+
+{% block content %}
+<div class="max-w-full mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h1 class="text-2xl font-bold text-center mb-2">Catálogo Base Acumulado</h1>
+    <h2 class="text-xl text-center mb-2">
+        Contrato: <strong>{{ contrato.nombre }}</strong>
+    </h2>
+    <p class="text-center mb-2">
+        Fecha de generación: {{ fecha_generacion.strftime('%d/%m/%Y') }}
+    </p>
+    <p class="text-center mb-2 text-gray-700">
+        Versión del catálogo:
+        {% if version_catalogo and version_catalogo != "N/A" %}
+            <strong>#{{ version_catalogo }}</strong>
+        {% else %}
+            <span class="italic text-red-600">Versión no registrada</span>
+        {% endif %}
+    </p>
+
+    <p class="text-center text-green-700 font-semibold text-lg mb-6">
+        Total del Catálogo: ${{ "{:,.2f}".format(total_catalogo) }}
+    </p>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full w-full text-sm border border-gray-300">
+            <thead class="bg-gray-200">
+                <tr>
+                    <th class="px-3 py-2 text-left">Partida</th>
+                    <th class="px-3 py-2 text-left">Nombre Partida</th>
+                    <th class="px-3 py-2 text-left">Clave</th>
+                    <th class="px-3 py-2 text-left">Estatus</th>
+                    <th class="px-3 py-2 text-left w-96">Descripción</th>
+                    <th class="px-3 py-2 text-left">Unidad</th>
+                    <th class="px-3 py-2 text-right bg-gray-200">Cantidad</th>
+                    <th class="px-3 py-2 text-right text-blue-700">Precio Unitario</th>
+                    <th class="px-3 py-2 text-right text-blue-700">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for partida in partidas %}
+                    <tr class="bg-gray-100 font-semibold">
+                        <td class="px-3 py-2 text-left" colspan="9">
+                            Partida {{ partida.partida }} — {{ partida.nombre_partida }}
+                        </td>
+                    </tr>
+                    {% for concepto in partida.conceptos %}
+                    <tr class="border-t">
+                        <td class="px-3 py-1 text-left">{{ partida.partida }}</td>
+                        <td class="px-3 py-1 text-left">{{ partida.nombre_partida }}</td>
+                        <td class="px-3 py-1 text-left">{{ concepto.clave }}</td>
+                        <td class="px-3 py-1 text-left">
+                            {% if concepto.clave.startswith('E') %}
+                                {{ concepto.estatus }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-1 text-left whitespace-pre-wrap break-words w-96">{{ concepto.descripcion }}</td>
+                        <td class="px-3 py-1 text-left">{{ concepto.unidad }}</td>
+                        <td class="px-3 py-1 text-right bg-gray-100">{{ "{:,.2f}".format(concepto.cantidad) }}</td>
+                        <td class="px-3 py-1 text-right text-blue-700">${{ "{:,.2f}".format(concepto.precio_unitario) }}</td>
+                        <td class="px-3 py-1 text-right text-blue-700">${{ "{:,.2f}".format(concepto.subtotal) }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="border-t font-semibold bg-gray-50">
+                        <td class="px-3 py-2 text-right" colspan="8">Subtotal Partida:</td>
+                        <td class="px-3 py-2 text-right text-blue-700">${{ "{:,.2f}".format(partida.subtotal_partida) }}</td>
+                    </tr>
+                {% endfor %}
+                <tr class="border-t font-bold bg-green-100">
+                    <td class="px-3 py-3 text-right" colspan="8">IVA (16%):</td>
+                    <td class="px-3 py-3 text-right">${{ "{:,.2f}".format(iva) }}</td>
+                </tr>
+                <tr class="border-t font-bold bg-green-200">
+                    <td class="px-3 py-3 text-right" colspan="8">Total con IVA:</td>
+                    <td class="px-3 py-3 text-right">${{ "{:,.2f}".format(total_con_iva) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-6">
+        <a href="{{ url_for('contratos_obra.panel_contrato', contrato_id=contrato.id) }}" class="text-blue-700 underline">← Volver al Panel del Contrato</a>
+    </div>
+
+    <div class="mt-6 text-right text-xs text-gray-400">
+        pantalla: {{ pantalla }}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% set pantalla = 'prefiniquito_detalle' %}
+{% extends 'base.html' %}
+
+{% block title %}Prefiniquito {{ prefiniquito.id }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h1 class="text-2xl font-bold text-center mb-2">Detalle del Prefiniquito #{{ prefiniquito.id }}</h1>
+    <p class="text-sm text-gray-500 text-center mb-4">
+        ID de catálogo actualizado: <span class="font-semibold">{{ prefiniquito.version_actualizada_id }}</span>
+    </p>
+
+    <div class="grid grid-cols-3 gap-4 mb-6 text-sm">
+        <p><strong>Contrato:</strong> {{ prefiniquito.contrato.nombre }}</p>
+        <p><strong>Fecha:</strong> {{ prefiniquito.fecha_generacion.strftime('%d-%m-%Y') }}</p>
+        <p><strong>Total Original:</strong> {{ prefiniquito.total_original | moneda }}</p>
+        <p><strong>Total Actualizado:</strong> {{ prefiniquito.total_actualizado | moneda }}</p>
+        <p><strong>Diferencia Total:</strong>
+            <span class="{{ 'text-green-700' if prefiniquito.diferencia_total >= 0 else 'text-red-700' }}">
+                {{ prefiniquito.diferencia_total | moneda }}
+            </span>
+        </p>
+    </div>
+
+    <div class="overflow-auto">
+        <table class="table-auto w-full text-sm border border-gray-300">
+            <thead class="bg-gray-200 text-left">
+                <tr>
+                    <th class="px-2 py-1">Clave</th>
+                    <th class="px-2 py-1">Descripción</th>
+                    <th class="px-2 py-1">Unidad</th>
+                    <th class="px-2 py-1">Cantidad Orig</th>
+                    <th class="px-2 py-1">Subtotal Orig</th>
+                    <th class="px-2 py-1">Cantidad Act</th>
+                    <th class="px-2 py-1">Subtotal Act</th>
+                    <th class="px-2 py-1">Δ Cant</th>
+                    <th class="px-2 py-1">Δ $</th>
+                    <th class="px-2 py-1">Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in detalles %}
+                <tr class="border-t 
+                    {% if d.tipo_cambio == 'modificado' %}bg-yellow-100
+                    {% elif d.tipo_cambio == 'nuevo' %}bg-green-100
+                    {% endif %}">
+                    <td class="px-2 py-1">{{ d.clave_concepto }}</td>
+                    <td class="px-2 py-1">{{ d.descripcion }}</td>
+                    <td class="px-2 py-1">{{ d.unidad }}</td>
+                    <td class="px-2 py-1">{{ d.cantidad_original or 0 }}</td>
+                    <td class="px-2 py-1">{{ d.subtotal_original | moneda }}</td>
+                    <td class="px-2 py-1">{{ d.cantidad_actualizada or 0 }}</td>
+                    <td class="px-2 py-1">{{ d.subtotal_actualizado | moneda }}</td>
+                    <td class="px-2 py-1 text-blue-800">{{ "{:+.2f}".format(d.diferencia_cantidad or 0) }}</td>
+                    <td class="px-2 py-1 text-purple-800">{{ "{:+,.2f}".format(d.diferencia_subtotal or 0) }}</td>
+                    <td class="px-2 py-1">
+                        {% if d.tipo_cambio == 'modificado' %}
+                            <span class="bg-yellow-200 text-yellow-800 px-2 py-1 rounded text-xs font-semibold">
+                                ✏️ Modificado
+                            </span>
+                        {% elif d.tipo_cambio == 'nuevo' %}
+                            <span class="bg-green-200 text-green-800 px-2 py-1 rounded text-xs font-semibold">
+                                🆕 Nuevo
+                            </span>
+                        {% else %}
+                            <span class="bg-gray-200 text-gray-800 px-2 py-1 rounded text-xs font-semibold">
+                                ✅ Sin cambio
+                            </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-6">
+        <a href="{{ url_for('prefiniquitos.historial_prefiniquitos', contrato_id=prefiniquito.contrato_id) }}"
+           class="text-sm text-blue-700 underline">
+            ← Volver al historial de prefiniquitos
+        </a>
+    </div>
+</div>
+{% endblock %}

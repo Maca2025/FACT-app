@@ -1,0 +1,56 @@
+{% set pantalla = 'centros' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Botón para volver al inicio -->
+<div class="mb-6">
+    <a href="{{ url_for('index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        ⬅ Volver al inicio
+    </a>
+</div>
+
+<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8">
+    <h1 class="text-2xl font-bold mb-6">Registrar Centro</h1>
+
+    <form method="POST" class="space-y-4">
+        <div>
+            <label class="block font-semibold">Nombre del Centro:</label>
+            <input type="text" name="centro" required class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Código del Centro:</label>
+            <input type="text" name="codigo_centro" required class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Dirección:</label>
+            <input type="text" name="direccion" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Teléfono:</label>
+            <input type="text" name="telefono" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Correo Electrónico:</label>
+            <input type="email" name="correo_electronico" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Guardar Centro</button>
+    </form>
+</div>
+
+<div class="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
+    <h2 class="text-xl font-bold mb-4">Centros Registrados</h2>
+    <ul class="list-disc list-inside space-y-2">
+        {% for centro in centros %}
+            <li>
+                <strong>{{ centro.centro }}</strong> — 
+                {{ centro.codigo_centro }}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Detalle de Estimación{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h2 class="text-2xl font-bold mb-4">Detalle de Estimación #{{ estimacion.numero_estimacion }}</h2>
+    <p><strong>Contrato:</strong> {{ estimacion.nombre_contrato }}</p>
+    <p><strong>Fecha:</strong> {{ estimacion.fecha.strftime('%d/%m/%Y') }}</p>
+
+    {% if not detalles %}
+        <div class="mt-6 text-gray-700">
+            <p>Esta estimación no tiene conceptos registrados.</p>
+            <a href="{{ url_for('estimaciones_nuevo.agregar_conceptos_estimacion', estimacion_id=estimacion.id) }}"
+               class="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+               + Agregar conceptos a esta estimación
+            </a>
+        </div>
+    {% else %}
+        <div class="mt-6">
+            <table class="w-full table-auto text-sm border border-gray-300">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="px-3 py-2 text-left">Clave</th>
+                        <th class="px-3 py-2 text-left">Descripción</th>
+                        <th class="px-3 py-2 text-center">Unidad</th>
+                        <th class="px-3 py-2 text-right">Cantidad</th>
+                        <th class="px-3 py-2 text-right">PU</th>
+                        <th class="px-3 py-2 text-right">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in detalles %}
+                    <tr class="border-t">
+                        <td class="px-3 py-2">{{ d.clave_concepto }}</td>
+                        <td class="px-3 py-2">{{ d.descripcion }}</td>
+                        <td class="px-3 py-2 text-center">{{ d.unidad }}</td>
+                        <td class="px-3 py-2 text-right">{{ d.cantidad_estimacion }}</td>
+                        <td class="px-3 py-2 text-right">${{ '%.2f'|format(d.precio_unitario) }}</td>
+                        <td class="px-3 py-2 text-right">${{ '%.2f'|format(d.subtotal) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+    <div class="mt-8">
+        <a href="{{ url_for('estimaciones_nuevo.listado_estimaciones', contrato_id=estimacion.contrato_id) }}"
+           class="text-blue-600 hover:underline">&larr; Volver al listado de estimaciones</a>
+    </div>
+</div>
+{% endblock %}

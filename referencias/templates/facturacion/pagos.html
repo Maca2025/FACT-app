@@ -1,0 +1,56 @@
+{% set pantalla = 'pagos' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <a href="{{ url_for('index') }}" class="text-blue-600 underline mb-4 block">&larr; Volver al inicio</a>
+    <h1 class="text-2xl font-bold mb-6">Registrar Pago</h1>
+
+    <form method="POST" class="space-y-4">
+        <div>
+            <label class="block font-semibold">Factura:</label>
+            <select name="factura_id" required class="w-full border border-gray-300 rounded px-3 py-2">
+                {% for factura in facturas %}
+                    <option value="{{ factura.id }}">
+                        {{ factura.numero_factura }} - {{ factura.cliente.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label class="block font-semibold">Fecha de Pago:</label>
+            <input type="date" name="fecha_pago" required class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Monto:</label>
+            <input type="number" name="monto" step="0.01" required class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Referencia:</label>
+            <input type="text" name="referencia" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            Registrar Pago
+        </button>
+    </form>
+</div>
+
+<div class="max-w-4xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h2 class="text-xl font-bold mb-4">Pagos Registrados</h2>
+    <ul class="space-y-2 list-disc list-inside">
+        {% for pago in pagos %}
+            <li>
+                <strong>{{ pago.factura.numero_factura }}</strong> —
+                ${{ "%.2f"|format(pago.monto) }} —
+                {{ pago.fecha_pago }} —
+                Ref: {{ pago.referencia }} —
+                Parcialidad {{ pago.parcialidad }}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

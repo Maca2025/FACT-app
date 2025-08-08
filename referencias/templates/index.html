@@ -1,0 +1,57 @@
+{% set pantalla = 'index' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-12 bg-white shadow-xl rounded-2xl px-10 py-12 space-y-12">
+
+    <!-- Título principal -->
+    <div class="text-center">
+        <h1 class="text-3xl font-bold tracking-wide text-gray-800 mb-2">
+            Sistema de Facturación y Administración de Obra
+        </h1>
+        <p class="text-gray-500 text-sm">Panel principal de navegación</p>
+    </div>
+
+    <!-- Sección 1: Obras -->
+    <div>
+        <h2 class="text-lg font-semibold text-gray-700 uppercase tracking-wide mb-4 border-b border-gray-300 pb-1">Obras</h2>
+        <ul class="space-y-2 pl-4 text-blue-700 list-disc list-inside">
+            <li><a href="{{ url_for('contratos_obra.obras_abiertas') }}" class="hover:underline">Obras Abiertas</a></li>
+            <li><a href="{{ url_for('contratos_obra.obras_cerradas') }}" class="hover:underline">Obras Cerradas</a></li>
+        </ul>
+    </div>
+
+    <!-- Sección 2: Clientes y Contratos -->
+    <div>
+        <h2 class="text-lg font-semibold text-gray-700 uppercase tracking-wide mb-4 border-b border-gray-300 pb-1">Clientes y Contratos</h2>
+        <ul class="space-y-2 pl-4 text-blue-700 list-disc list-inside">
+            <li><a href="{{ url_for('clientes.clientes') }}" class="hover:underline">Registro de Clientes</a></li>
+            <li><a href="{{ url_for('centros.centros') }}" class="hover:underline">Registro de Centros</a></li>
+            <li><a href="{{ url_for('contratos.contratos') }}" class="hover:underline">Registro de Contratos</a></li>
+            <li><a href="{{ url_for('contratos_obra.editar_contrato', contrato_id=1) }}" class="text-yellow-700 hover:underline">Editar Contrato (Ejemplo: ID=1)</a></li>
+        </ul>
+    </div>
+
+    <!-- Sección 3: Avances y Estimaciones -->
+    <div>
+        <h2 class="text-lg font-semibold text-gray-700 uppercase tracking-wide mb-4 border-b border-gray-300 pb-1">Avances y Estimaciones</h2>
+        <ul class="space-y-2 pl-4 text-blue-700 list-disc list-inside">
+            <li><a href="{{ url_for('avances.subir_avance') }}" class="hover:underline">Subir Avance</a></li>
+            <li><a href="{{ url_for('estimaciones_nuevo.listado_estimaciones') }}" class="hover:underline">Listado de Estimaciones</a></li>
+            <li><a href="{{ url_for('estimaciones_nuevo.nueva_estimacion', contrato_id=1) }}" class="hover:underline text-yellow-700">Nueva Estimación (Ejemplo: ID=1)</a></li>
+        </ul>
+    </div>
+
+    <!-- Sección 4: Facturación -->
+    <div>
+        <h2 class="text-lg font-semibold text-gray-700 uppercase tracking-wide mb-4 border-b border-gray-300 pb-1">Facturación</h2>
+        <ul class="space-y-2 pl-4 text-blue-700 list-disc list-inside">
+            <li><a href="{{ url_for('facturas.facturas') }}" class="hover:underline">Registro de Facturas</a></li>
+            <li><a href="{{ url_for('pagos.pagos') }}" class="hover:underline">Registro de Pagos</a></li>
+            <li><a href="{{ url_for('reportesfact.reporte_facturas') }}" class="hover:underline">Reporte de Facturas</a></li>
+            <li><a href="{{ url_for('reportesfact.reporte_pagos_opciones') }}" class="hover:underline">Reporte de Pagos</a></li>
+        </ul>
+    </div>
+
+</div>
+{% endblock %}

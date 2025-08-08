@@ -1,0 +1,60 @@
+{% set pantalla = 'reporte_pagos_resultado' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <a href="{{ url_for('reporte_pagos_opciones') }}" class="text-blue-600 underline mb-4 block">&larr; Volver a opciones</a>
+    <h1 class="text-2xl font-bold mb-6">{{ titulo }}</h1>
+
+    {% for grupo in datos_por_empresa %}
+        <h2 class="text-xl font-semibold mt-8 mb-3 border-b border-gray-300 pb-1">{{ grupo.empresa }}</h2>
+
+        {% if grupo.datos %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white text-sm">
+                    <thead class="bg-gray-100 border-b">
+                        <tr>
+                            <th class="px-4 py-2 text-left">Factura</th>
+                            <th class="px-4 py-2 text-left">Contrato</th>
+                            <th class="px-4 py-2 text-left">Cliente</th>
+                            <th class="px-4 py-2 text-right">Total</th>
+                            <th class="px-4 py-2 text-right">Pagado</th>
+                            <th class="px-4 py-2 text-right">Saldo</th>
+                            <th class="px-4 py-2">Pagos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in grupo.datos %}
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="px-4 py-2">
+                                    <a href="{{ url_for('historial_factura', factura_id=entry.factura.id) }}" class="text-blue-600 underline hover:text-blue-800">
+                                        {{ entry.factura.numero_factura }}
+                                    </a>
+                                </td>
+                                <td class="px-4 py-2">{{ entry.factura.contrato.nombre }}</td>
+                                <td class="px-4 py-2">{{ entry.factura.cliente.nombre }}</td>
+                                <td class="px-4 py-2 text-right">${{ "%.2f"|format(entry.factura.total) }}</td>
+                                <td class="px-4 py-2 text-right">${{ "%.2f"|format(entry.total_pagado) }}</td>
+                                <td class="px-4 py-2 text-right">${{ "%.2f"|format(entry.saldo) }}</td>
+                                <td class="px-4 py-2">
+                                    <ul class="list-disc list-inside text-xs">
+                                        {% for pago in entry.pagos %}
+                                            <li>
+                                                {{ pago.fecha_pago }} — ${{ "%.2f"|format(pago.monto) }} —
+                                                {{ pago.metodo_pago }} — Ref: {{ pago.referencia }}
+                                                ({{ pago.parcialidad }})
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-gray-600">No hay facturas para esta empresa.</p>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}

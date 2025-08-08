@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% set pantalla = 'subir_acuse' %}
+
+{% block content %}
+<div class="max-w-xl mx-auto px-4 py-6">
+    <h1 class="text-xl font-bold mb-4">Subir Acuse – {{ clave }} / Revisión #{{ revision.numero_revision }}</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Seleccionar archivo PDF</label>
+            <input type="file" name="acuse_pdf" accept="application/pdf"
+                   class="mt-1 block w-full text-sm text-gray-700 border border-gray-300 rounded p-2" required>
+        </div>
+
+        <div class="flex justify-between items-center mt-6">
+            <a href="{{ url_for('extraordinarios.historial_revisiones', contrato_id=contrato_id, clave=clave) }}"
+               class="text-sm text-gray-600 hover:underline">← Cancelar</a>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Subir Acuse
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

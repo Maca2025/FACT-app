@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Prueba Alpine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.13.5"></script>
+</head>
+<body class="p-8 bg-gray-100" x-data="{ abierto: false }">
+
+  <button @click="abierto = true" class="bg-blue-600 text-white px-4 py-2 rounded">
+    Abrir Modal
+  </button>
+
+  <template x-if="abierto">
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div class="bg-white p-6 rounded shadow-lg w-1/3">
+        <h2 class="text-xl font-bold mb-4">Hola desde Alpine</h2>
+        <button @click="abierto = false" class="text-sm bg-gray-300 px-4 py-2 rounded">Cerrar</button>
+      </div>
+    </div>
+  </template>
+
+</body>
+</html>

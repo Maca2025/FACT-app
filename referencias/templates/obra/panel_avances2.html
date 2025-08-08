@@ -1,0 +1,92 @@
+{% set pantalla = 'panel_avances' %}
+{% extends 'base.html' %}
+
+{% block title %}Panel de Avances{% endblock %}
+
+{% block content %}
+<div class="w-full mt-10 bg-white shadow-md rounded-xl p-8 overflow-x-auto">
+  <h1 class="text-2xl font-bold text-center mb-6">Panel de Avances</h1>
+  <h2 class="text-xl text-center mb-6">{{ contrato.nombre }}</h2>
+
+  {% if fechas %}
+  <table class="min-w-full text-sm border border-gray-300">
+    <thead class="bg-gray-200 sticky top-0">
+      <tr>
+        <th class="border px-1 py-2 text-left sticky left-0 bg-gray-200 z-30 w-16">Clave</th>
+        <th class="border px-1 py-2 text-left sticky left-16 bg-gray-200 z-30 w-80">Descripción</th>
+        <th class="border px-1 py-2 text-left sticky left-[320px] bg-gray-200 z-30 w-16">Un</th>
+        <th class="border px-1 py-2 text-left sticky left-[384px] bg-gray-200 z-30 w-24" style="transform: translateX(-10px);">Cant</th>
+        <th class="border px-1 py-2 text-left sticky left-[480px] bg-gray-200 z-30 w-24" style="transform: translateX(1px);">Acum</th>
+        <th class="border px-1 py-2 text-right sticky left-[576px] bg-gray-200 z-30 w-24" style="transform: translateX(1px);">Cant Pend</th>
+        <th class="border px-1 py-2 text-right sticky left-[672px] bg-gray-200 z-30 w-20" style="transform: translateX(-50px);">PU</th>
+        <th class="border px-1 py-2 text-right sticky left-[740px] bg-gray-200 z-30 w-32" style="transform: translateX(-10px);">Subt Cat</th>
+        <th class="border px-1 py-2 text-right sticky left-[812px] bg-gray-200 z-30 w-32" style="transform: translateX(-5px);">Subt Avanz</th>
+        <th class="border px-1 py-2 text-right w-32">Subt Pend</th>
+        {% for f in fechas %}
+          <th class="border px-1 py-2 text-center w-20">{{ f.strftime('%d/%m/%Y') }}</th>
+          <th class="border px-1 py-2 text-center w-24"></th>
+        {% endfor %}
+      </tr>
+      <tr class="bg-gray-200">
+        <th class="border px-1" colspan="10"></th>
+        {% for f in fechas %}
+          <th class="border px-1 py-2 text-right w-20">Cant.</th>
+          <th class="border px-1 py-2 text-right w-24">Subt.</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for partida, data in partidas.items() %}
+      <tr class="bg-gray-100 font-semibold">
+        <td class="border px-1 py-2 text-left sticky left-0 bg-gray-100 z-10" colspan="{{ 10 + fechas|length * 2 }}">
+          Partida {{ partida }} — {{ data.nombre_partida }}
+        </td>
+      </tr>
+      {% for info in data.conceptos %}
+      <tr class="border-t">
+        <td class="border px-1 py-1 sticky left-0 bg-white font-mono">{{ info.concepto.clave|default('') }}</td>
+        <td class="border px-1 py-1 sticky left-16 bg-white">{{ info.concepto.descripcion|default('') }}</td>
+        <td class="border px-1 py-1 sticky left-[320px] bg-white w-16">{{ info.concepto.unidad|default('') }}</td>
+
+        <td class="border px-1 py-1 text-right sticky left-[384px] bg-white w-24">{{ "{:,.2f}".format(info.concepto.cantidad|default(0)) }}</td>
+        <td class="border px-1 py-1 text-right sticky left-[480px] bg-white w-24">{{ "{:,.2f}".format(info.acumulado|default(0)) }}</td>
+        <td class="border px-1 py-1 text-right sticky left-[576px] bg-white w-24">{{ "{:,.2f}".format(info.cantidad_pendiente|default(0)) }}</td>
+        <td class="border px-1 py-1 text-right sticky left-[672px] bg-white w-20">${{ "{:,.2f}".format(info.concepto.precio_unitario|default(0)) }}</td>
+        <td class="border px-1 py-1 text-right sticky left-[740px] bg-white w-32">${{ "{:,.2f}".format(info.subtotal_catalogo|default(0)) }}</td>
+        <td class="border px-1 py-1 text-right sticky left-[812px] bg-white w-32">${{ "{:,.2f}".format(info.subtotal_avanzado|default(0)) }}</td>
+        <td class="border px-1 py-1 text-right w-32">${{ "{:,.2f}".format(info.subtotal_pendiente|default(0)) }}</td>
+
+        {% for f in fechas %}
+          <td class="border px-1 py-1 text-right bg-blue-100 w-20">{{ "{:,.2f}".format(info.cantidades_por_fecha[f]|default(0)) }}</td>
+          <td class="border px-1 py-1 text-right w-24">${{ "{:,.2f}".format(info.subtotales_por_fecha[f]|default(0)) }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+      <tr class="border-t font-semibold bg-gray-50">
+        <td class="border px-1" colspan="6"></td>
+        <td class="border px-1 py-2 text-right">${{ "{:,.2f}".format(data.subtotal_partida_catalogo) }}</td>
+        <td class="border px-1 py-2 text-right">${{ "{:,.2f}".format(data.subtotal_partida_avanzado) }}</td>
+        <td class="border px-1 py-2 text-right">${{ "{:,.2f}".format(data.subtotal_partida_pendiente) }}</td>
+        <td class="border px-1" colspan="{{ fechas|length * 2 }}"></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr class="border-t font-bold bg-gray-100">
+        <td class="border px-1" colspan="5" class="text-right">Totales Cant.:</td>
+        <td class="border px-1 py-3 text-right">{{ "{:,.2f}".format(totales_cantidades.values()|sum|default(0)) }}</td>
+        <td class="border px-1"></td>
+        <td class="border px-1 py-3 text-right">${{ "{:,.2f}".format(totales_por_fecha.values()|sum|default(0)) }}</td>
+        <td class="border px-1" colspan="6"></td>
+        {% for f in fechas %}
+          <td class="border px-1 py-3 text-right bg-blue-100 w-20">{{ "{:,.2f}".format(totales_cantidades[f]|default(0)) }}</td>
+          <td class="border px-1 py-3 text-right w-24">${{ "{:,.2f}".format(totales_por_fecha[f]|default(0)) }}</td>
+        {% endfor %}
+      </tr>
+    </tfoot>
+  </table>
+  {% else %}
+  <p class="text-center text-gray-600">No hay avances registrados para este contrato.</p>
+  {% endif %}
+</div>
+{% endblock %}

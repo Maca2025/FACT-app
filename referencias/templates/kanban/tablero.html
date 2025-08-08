@@ -1,0 +1,158 @@
+{% set pantalla = 'catalogo_base' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-screen-xl mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-4">Tablero Kanban de Desarrollo</h1>
+
+    <!-- Filtro de prioridad -->
+    <form method="get" class="mb-6 flex items-center gap-3">
+        <label class="font-semibold text-sm">Filtrar por prioridad:</label>
+        <select name="prioridad" onchange="this.form.submit()"
+                class="border rounded px-3 py-1">
+            <option value="">Todas</option>
+            <option value="Alta" {% if prioridad == 'Alta' %}selected{% endif %}>Alta 🔥</option>
+            <option value="Media" {% if prioridad == 'Media' %}selected{% endif %}>Media ⚠️</option>
+            <option value="Baja" {% if prioridad == 'Baja' %}selected{% endif %}>Baja 🐢</option>
+        </select>
+    </form>
+
+    <div class="mb-4 flex justify-end gap-3">
+        <a href="{{ url_for('kanban.lista_tareas') }}"
+           class="inline-block bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">
+            📋 Ver como Lista
+        </a>
+        <a href="{{ url_for('kanban.nueva_tarea') }}"
+           class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            + Nueva Tarea
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Columna Pendiente -->
+        <div id="pendientes" class="kanban-col bg-white rounded-xl shadow p-4" data-estado="Pendiente">
+            <h2 class="text-xl font-semibold mb-3 text-yellow-600">Pendiente</h2>
+            {% for tarea in pendientes %}
+                <div class="kanban-tarea p-3 mb-3 rounded border-l-4
+                    {% if tarea.prioridad == 'Alta' %}
+                        bg-red-100 border-red-500
+                    {% elif tarea.prioridad == 'Media' %}
+                        bg-yellow-100 border-yellow-500
+                    {% elif tarea.prioridad == 'Baja' %}
+                        bg-green-100 border-green-500
+                    {% endif %}"
+                     data-id="{{ tarea.id }}">
+                    <h3 class="font-bold">{{ tarea.titulo }}</h3>
+                    <p class="text-sm text-gray-700">{{ tarea.descripcion }}</p>
+                    <p class="text-xs mt-1">
+                        Prioridad:
+                        {% if tarea.prioridad == 'Alta' %}
+                            <span class="text-red-600 font-semibold">Alta 🔥</span>
+                        {% elif tarea.prioridad == 'Media' %}
+                            <span class="text-yellow-600 font-semibold">Media ⚠️</span>
+                        {% elif tarea.prioridad == 'Baja' %}
+                            <span class="text-green-600 font-semibold">Baja 🐢</span>
+                        {% endif %}
+                    </p>
+                    <p class="text-xs text-gray-500 mt-1">Creada: {{ tarea.fecha_creacion }}</p>
+                    <form action="{{ url_for('kanban.eliminar_tarea', tarea_id=tarea.id) }}" method="POST" class="mt-2">
+                        <button type="submit" class="text-red-600 text-sm hover:underline">🔥 Eliminar</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Columna En Proceso -->
+        <div id="en_proceso" class="kanban-col bg-white rounded-xl shadow p-4" data-estado="En proceso">
+            <h2 class="text-xl font-semibold mb-3 text-blue-600">En Proceso</h2>
+            {% for tarea in en_proceso %}
+                <div class="kanban-tarea p-3 mb-3 rounded border-l-4
+                    {% if tarea.prioridad == 'Alta' %}
+                        bg-red-100 border-red-500
+                    {% elif tarea.prioridad == 'Media' %}
+                        bg-yellow-100 border-yellow-500
+                    {% elif tarea.prioridad == 'Baja' %}
+                        bg-green-100 border-green-500
+                    {% endif %}"
+                     data-id="{{ tarea.id }}">
+                    <h3 class="font-bold">{{ tarea.titulo }}</h3>
+                    <p class="text-sm text-gray-700">{{ tarea.descripcion }}</p>
+                    <p class="text-xs mt-1">
+                        Prioridad:
+                        {% if tarea.prioridad == 'Alta' %}
+                            <span class="text-red-600 font-semibold">Alta 🔥</span>
+                        {% elif tarea.prioridad == 'Media' %}
+                            <span class="text-yellow-600 font-semibold">Media ⚠️</span>
+                        {% elif tarea.prioridad == 'Baja' %}
+                            <span class="text-green-600 font-semibold">Baja 🐢</span>
+                        {% endif %}
+                    </p>
+                    <p class="text-xs text-gray-500 mt-1">Creada: {{ tarea.fecha_creacion }}</p>
+                    <form action="{{ url_for('kanban.eliminar_tarea', tarea_id=tarea.id) }}" method="POST" class="mt-2">
+                        <button type="submit" class="text-red-600 text-sm hover:underline">🔥 Eliminar</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Columna Completado -->
+        <div id="completadas" class="kanban-col bg-white rounded-xl shadow p-4" data-estado="Completado">
+            <h2 class="text-xl font-semibold mb-3 text-green-600">Completado</h2>
+            {% for tarea in completadas %}
+                <div class="kanban-tarea p-3 mb-3 rounded border-l-4
+                    {% if tarea.prioridad == 'Alta' %}
+                        bg-red-100 border-red-500
+                    {% elif tarea.prioridad == 'Media' %}
+                        bg-yellow-100 border-yellow-500
+                    {% elif tarea.prioridad == 'Baja' %}
+                        bg-green-100 border-green-500
+                    {% endif %}"
+                     data-id="{{ tarea.id }}">
+                    <h3 class="font-bold">{{ tarea.titulo }}</h3>
+                    <p class="text-sm text-gray-700">{{ tarea.descripcion }}</p>
+                    <p class="text-xs mt-1">
+                        Prioridad:
+                        {% if tarea.prioridad == 'Alta' %}
+                            <span class="text-red-600 font-semibold">Alta 🔥</span>
+                        {% elif tarea.prioridad == 'Media' %}
+                            <span class="text-yellow-600 font-semibold">Media ⚠️</span>
+                        {% elif tarea.prioridad == 'Baja' %}
+                            <span class="text-green-600 font-semibold">Baja 🐢</span>
+                        {% endif %}
+                    </p>
+                    <p class="text-xs text-gray-500 mt-1">Creada: {{ tarea.fecha_creacion }}</p>
+                    <form action="{{ url_for('kanban.eliminar_tarea', tarea_id=tarea.id) }}" method="POST" class="mt-2">
+                        <button type="submit" class="text-red-600 text-sm hover:underline">🔥 Eliminar</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+    document.querySelectorAll('.kanban-col').forEach(col => {
+        new Sortable(col, {
+            group: 'kanban',
+            animation: 150,
+            onAdd: function (evt) {
+                const tareaId = evt.item.dataset.id;
+                const nuevoEstado = evt.to.dataset.estado;
+
+                fetch(`/kanban/arrastrar/${tareaId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nuevo_estado: nuevoEstado })
+                }).then(() => {
+                    console.log(`Tarea ${tareaId} movida a ${nuevoEstado}`);
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

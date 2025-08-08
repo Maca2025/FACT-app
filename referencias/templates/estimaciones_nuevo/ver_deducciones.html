@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Deducciones de Estimación{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h2 class="text-2xl font-bold mb-6">Deducciones - Estimación #{{ estimacion.numero_estimacion }}</h2>
+
+    <!-- Deducciones Recurrentes -->
+    <h3 class="text-xl font-semibold mb-4">Deducciones del Contrato</h3>
+    {% if deducciones_recurrentes %}
+    <table class="w-full table-auto text-sm border border-gray-300 mb-6">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="px-3 py-2 text-left">Nombre</th>
+                <th class="px-3 py-2 text-right">% Aplicado</th>
+                <th class="px-3 py-2 text-right">Monto</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in deducciones_recurrentes %}
+            <tr class="border-t">
+                <td class="px-3 py-2">{{ d.nombre }}</td>
+                <td class="px-3 py-2 text-right">{{ '%.2f'|format(d.porcentaje) }}%</td>
+                <td class="px-3 py-2 text-right">${{ '%.2f'|format(d.monto) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-gray-500 mb-6">Este contrato no tiene deducciones registradas.</p>
+    {% endif %}
+
+    <!-- Deducciones Manuales -->
+    <h3 class="text-xl font-semibold mb-4">Otras Deducciones</h3>
+    {% if deducciones_manual %}
+    <table class="w-full table-auto text-sm border border-gray-300 mb-6">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="px-3 py-2 text-left">Nombre</th>
+                <th class="px-3 py-2 text-right">Monto</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in deducciones_manual %}
+            <tr class="border-t">
+                <td class="px-3 py-2">{{ d.nombre }}</td>
+                <td class="px-3 py-2 text-right">${{ '%.2f'|format(d.monto) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-gray-500 mb-6">No hay deducciones manuales registradas.</p>
+    {% endif %}
+
+    <!-- Formulario para nueva deducción manual -->
+    <h4 class="text-lg font-semibold mb-2">Agregar nueva deducción manual</h4>
+    <form method="POST" action="{{ url_for('estimaciones_nuevo.agregar_deduccion_manual', estimacion_id=estimacion.id) }}" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div>
+            <input type="text" name="nombre" placeholder="Nombre de la deducción" required
+                   class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+        <div>
+            <input type="number" name="monto" step="0.01" placeholder="Monto en pesos" required
+                   class="w-full border border-gray-300 rounded px-3 py-2 text-right">
+        </div>
+        <div class="md:col-span-2 text-right">
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                Agregar Deducción
+            </button>
+        </div>
+    </form>
+
+    <div class="mt-6 text-right">
+        <a href="{{ url_for('estimaciones_nuevo.ver_caratula_estimacion', estimacion_id=estimacion.id) }}"
+           class="text-sm text-blue-700 underline">
+            Siguiente → Carátula
+        </a>
+    </div>
+</div>
+{% endblock %}

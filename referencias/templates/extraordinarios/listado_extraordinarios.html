@@ -1,0 +1,55 @@
+{% set pantalla = 'listado_extraordinarios' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-6 py-8">
+    <h1 class="text-2xl font-bold mb-6">Listado de Conceptos Extraordinarios</h1>
+
+    <table class="min-w-full border text-sm shadow bg-white">
+        <thead class="bg-gray-100 text-gray-700">
+            <tr>
+                <th class="px-4 py-2 text-left">Clave</th>
+                <th class="px-4 py-2 text-left">Descripción</th>
+                <th class="px-4 py-2 text-right">PU</th>
+                <th class="px-4 py-2 text-center">Estado</th>
+                <th class="px-4 py-2 text-center">Revisiones</th>
+                <th class="px-4 py-2 text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for extra in extraordinarios %}
+            <tr class="border-t">
+                <td class="px-4 py-2 font-mono text-sm">{{ extra.clave }}</td>
+                <td class="px-4 py-2">{{ extra.descripcion }}</td>
+                <td class="px-4 py-2 text-right">
+                    ${{ '%.2f'|format(extra.precio_unitario)|replace(',', '_')|replace('.', ',')|replace('_', '.') }}
+                </td>
+                <td class="px-4 py-2 text-center">
+                    {% if extra.estado == 'elaboracion' %}
+                        E
+                    {% elif extra.estado == 'revision' %}
+                        R{{ extra.revisiones }}
+                    {% elif extra.estado == 'aprobado' %}
+                        A
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td class="px-4 py-2 text-center">{{ extra.revisiones }}</td>
+                <td class="px-4 py-2 text-center">
+                    <a href="{{ url_for('extraordinarios.historial_revisiones', contrato_id=contrato.id, clave=extra.clave|urlencode) }}"
+                       class="text-blue-600 hover:underline text-sm">
+                        Ir a actualizaciones e historial
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="mt-6">
+        <a href="{{ url_for('contratos_obra.panel_contrato', contrato_id=contrato.id) }}"
+           class="text-sm text-gray-600 hover:underline">← Volver al contrato</a>
+    </div>
+</div>
+{% endblock %}

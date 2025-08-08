@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% set pantalla = 'subir_pdf_revision' %}
+
+{% block content %}
+<div class="max-w-xl mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-4">Subir nuevo PDF de revisión – {{ clave }}</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Archivo PDF de descripción</label>
+            <input type="file" name="archivo_pdf" accept="application/pdf"
+                   class="mt-1 block w-full text-sm text-gray-600 border rounded px-3 py-2">
+        </div>
+
+        <div class="flex justify-between items-center">
+            <a href="{{ url_for('extraordinarios.historial_revisiones', contrato_id=contrato_id, clave=clave) }}"
+               class="text-sm text-gray-600 hover:underline">← Cancelar</a>
+            <button type="submit"
+                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Subir PDF
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

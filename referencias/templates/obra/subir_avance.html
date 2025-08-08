@@ -1,0 +1,74 @@
+{% set pantalla = 'subir_avance' %}
+{% extends 'base.html' %}
+
+{% block title %}Subir Avance Semanal{% endblock %}
+
+{% block scripts %}
+<script>
+    function actualizarAcumulado(id) {
+        const semanal = parseFloat(document.getElementById('semana_' + id).value) || 0;
+        const acumulado = parseFloat(document.getElementById('acumulado_' + id).dataset.valor) || 0;
+        const nuevo = acumulado + semanal;
+        document.getElementById('nuevo_' + id).innerText = nuevo.toFixed(2);
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 bg-white shadow-md rounded-xl p-8">
+    <h1 class="text-2xl font-bold mb-6 text-center">Subir Avance Semanal</h1>
+
+    {% if mensaje %}
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4 text-center">
+        {{ mensaje }}
+    </div>
+    {% endif %}
+
+    <form method="post" action="{{ url_for('avances.guardar_avance_filtrado', contrato_id=contrato.id) }}" class="space-y-6">
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-gray-300">
+                <thead class="bg-gray-200 text-sm">
+                    <tr>
+                        <th class="border px-2 py-1 text-left">Partida</th>
+                        <th class="border px-2 py-1 text-left">Concepto</th>
+                        <th class="border px-2 py-1 text-left">Descripción</th>
+                        <th class="border px-2 py-1 text-right">Cantidad Catálogo</th>
+                        <th class="border px-2 py-1 text-right">Acumulado</th>
+                        <th class="border px-2 py-1 text-right">Esta Semana</th>
+                        <th class="border px-2 py-1 text-right">Nuevo Acumulado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for concepto in conceptos %}
+                    <tr class="text-sm">
+                        <input type="hidden" name="concepto_id[]" value="{{ concepto.id }}">
+                        <td class="border px-2 py-1">{{ concepto.partida }}</td>
+                        <td class="border px-2 py-1">{{ concepto.concepto }}</td>
+                        <td class="border px-2 py-1">{{ concepto.descripcion }}</td>
+                        <td class="border px-2 py-1 text-right">{{ '%.2f'|format(concepto.cantidad) }}</td>
+                        <td class="border px-2 py-1 text-right" id="acumulado_{{ concepto.id }}" data-valor="{{ acumulados[concepto.id]|default(0) }}">{{ '%.2f'|format(acumulados[concepto.id]|default(0)) }}</td>
+                        <td class="border px-2 py-1 text-right">
+                            <input type="number" step="0.01" name="cantidad_{{ concepto.id }}" id="semana_{{ concepto.id }}" class="w-24 border rounded px-2 py-1 text-right" oninput="actualizarAcumulado('{{ concepto.id }}')">
+                        </td>
+                        <td class="border px-2 py-1 text-right" id="nuevo_{{ concepto.id }}">{{ '%.2f'|format(acumulados[concepto.id]|default(0)) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 text-center">
+            <label for="fecha" class="block text-sm font-medium text-gray-700 mb-1">Fecha del Avance:</label>
+            <input type="date" name="fecha" id="fecha" required class="border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300">
+        </div>
+
+        <div class="text-center mt-6">
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Guardar Avance</button>
+        </div>
+    </form>
+
+    <div class="text-center mt-8">
+        <a href="{{ url_for('contratos_obra.panel_contrato', contrato_id=contrato.id) }}" class="text-blue-700 underline text-sm">← Volver al Panel del Contrato</a>
+    </div>
+</div>
+{% endblock %}

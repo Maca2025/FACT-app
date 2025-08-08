@@ -1,0 +1,61 @@
+{% set pantalla = 'clientes' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Botón para volver al inicio -->
+<div class="mb-6">
+    <a href="{{ url_for('index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        ⬅ Volver al inicio
+    </a>
+</div>
+
+<div class="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8">
+    <h1 class="text-2xl font-bold mb-6">Registrar Cliente</h1>
+
+    <form method="POST" class="space-y-4">
+        <div>
+            <label class="block font-semibold">Nombre:</label>
+            <input type="text" name="nombre" required class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Razón Social:</label>
+            <input type="text" name="razon_social" required class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">RFC:</label>
+            <input type="text" name="rfc" required class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Email:</label>
+            <input type="email" name="email" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Teléfono:</label>
+            <input type="text" name="telefono" class="w-full border border-gray-300 rounded px-3 py-2">
+        </div>
+
+        <div>
+            <label class="block font-semibold">Dirección:</label>
+            <textarea name="direccion" rows="4" class="w-full border border-gray-300 rounded px-3 py-2"></textarea>
+        </div>
+
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Guardar Cliente</button>
+    </form>
+</div>
+
+<div class="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-8">
+    <h2 class="text-xl font-bold mb-4">Clientes Registrados</h2>
+    <ul class="list-disc list-inside space-y-2">
+        {% for cliente in clientes %}
+            <li>
+                <strong>{{ cliente.nombre }}</strong> — 
+                {{ cliente.rfc }} ({{ cliente.razon_social }})
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

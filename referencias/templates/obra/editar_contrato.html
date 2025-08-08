@@ -1,0 +1,124 @@
+{% set pantalla = 'editar_contrato' %}
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto mt-10">
+
+    <div class="bg-white shadow-md rounded-xl p-8 mb-10">
+        <h2 class="text-2xl font-bold mb-6">Editar Contrato</h2>
+        <form method="POST" class="space-y-4">
+            <div>
+                <label for="nombre" class="block font-semibold mb-1">Nombre del Contrato</label>
+                <input type="text" name="nombre" id="nombre" required class="w-full border border-gray-300 rounded px-3 py-2" value="{{ contrato.nombre if contrato else '' }}">
+            </div>
+
+            <div>
+                <label for="contrato" class="block font-semibold mb-1">Código del Contrato</label>
+                <input type="text" name="contrato" id="contrato" required class="w-full border border-gray-300 rounded px-3 py-2" value="{{ contrato.contrato if contrato else '' }}">
+            </div>
+
+            <div>
+                <label for="descripcion" class="block font-semibold mb-1">Descripción</label>
+                <textarea name="descripcion" id="descripcion" rows="3" class="w-full border border-gray-300 rounded px-3 py-2">{{ contrato.descripcion if contrato else '' }}</textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-semibold mb-1">Cliente</label>
+                    <select name="cliente_id" class="w-full border border-gray-300 rounded px-3 py-2">
+                        {% for cliente in clientes %}
+                            <option value="{{ cliente.id }}" {% if contrato and contrato.cliente_id == cliente.id %}selected{% endif %}>{{ cliente.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Centro</label>
+                    <select name="centro_id" class="w-full border border-gray-300 rounded px-3 py-2">
+                        {% for centro in centros %}
+                            <option value="{{ centro.id }}" {% if contrato and contrato.centro_id == centro.id %}selected{% endif %}>{{ centro.codigo_centro }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Empresa</label>
+                    <select name="empresa_id" class="w-full border border-gray-300 rounded px-3 py-2">
+                        {% for empresa in empresas %}
+                            <option value="{{ empresa.id }}" {% if contrato and contrato.empresa_id == empresa.id %}selected{% endif %}>{{ empresa.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="fecha_inicio" class="block font-semibold mb-1">Fecha de Inicio</label>
+                    <input type="date" name="fecha_inicio" id="fecha_inicio" class="w-full border border-gray-300 rounded px-3 py-2"
+                           value="{{ contrato.fecha_inicio.isoformat() if contrato and contrato.fecha_inicio else '' }}">
+                </div>
+
+                <div>
+                    <label for="duracion" class="block font-semibold mb-1">Duración (días)</label>
+                    <input type="number" name="duracion" min="0" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ contrato.duracion if contrato else '' }}">
+                </div>
+
+                <div>
+                    <label for="fecha_fin" class="block font-semibold mb-1">Fecha de Cierre</label>
+                    <input type="date" name="fecha_fin" id="fecha_fin" readonly class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 cursor-not-allowed"
+                           value="{{ contrato.fecha_fin.isoformat() if contrato and contrato.fecha_fin else '' }}">
+                </div>
+
+                <div>
+                    <label for="monto_sin_iva" class="block font-semibold mb-1">Monto sin IVA</label>
+                    <input type="number" name="monto_sin_iva" step="0.01" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ contrato.monto_sin_iva if contrato else '' }}">
+                </div>
+
+                <div>
+                    <label for="iva" class="block font-semibold mb-1">IVA</label>
+                    <input type="number" name="iva" step="0.01" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ contrato.iva if contrato else '' }}">
+                </div>
+
+                <div>
+                    <label for="monto_total" class="block font-semibold mb-1">Monto Total</label>
+                    <input type="number" name="monto_total" step="0.01" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ contrato.monto_total if contrato else '' }}">
+                </div>
+
+                <div>
+                    <label for="porcentaje_anticipo" class="block font-semibold mb-1">% Anticipo</label>
+                    <input type="number" name="porcentaje_anticipo" step="0.01" class="w-full border border-gray-300 rounded px-3 py-2" value="{{ contrato.porcentaje_anticipo if contrato else '' }}">
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="bg-white shadow-md rounded-xl p-8">
+        <h2 class="text-xl font-bold mb-4">Contratos Registrados por Empresa</h2>
+
+        {% for grupo in contratos_por_empresa %}
+            <h3 class="text-lg font-semibold mt-6 mb-2">{{ grupo.empresa }}</h3>
+            <ul class="space-y-2 list-disc list-inside mb-6">
+                {% for contrato in grupo.contratos %}
+                    <li>
+                        <strong>{{ contrato.nombre }}</strong> —
+                        Código: {{ contrato.contrato }} —
+                        Cliente: {{ contrato.cliente.nombre }} —
+                        Centro: {{ contrato.centro.codigo_centro }} —
+                        Monto Total: ${{ "%.2f"|format(contrato.monto_total or 0) }} —
+                        Anticipo: {{ contrato.porcentaje_anticipo or 0 }}%
+                        (=${{ "%.2f"|format(contrato.anticipo_total or 0) }})
+                        —
+                        <a href="{{ url_for('catalogos.catalogos_por_contrato', contrato_id=contrato.id) }}" class="text-blue-600 underline hover:text-blue-800">
+                            Ver catálogos
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

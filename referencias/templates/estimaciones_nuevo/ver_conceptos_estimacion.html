@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-10">
+    <h1 class="text-2xl font-bold text-center mb-6">Revisión de Conceptos Estimados</h1>
+
+    <form method="POST" action="{{ url_for('estimaciones_nuevo.editar_conceptos_estimacion', estimacion_id=estimacion.id) }}">
+        <div class="overflow-auto border rounded-lg shadow">
+            <table class="min-w-full table-auto text-sm text-right">
+                <thead class="bg-gray-100 text-gray-700">
+                    <tr>
+                        <th class="px-4 py-2 text-left">Clave</th>
+                        <th class="px-4 py-2 text-left">Descripción</th>
+                        <th class="px-4 py-2">Unidad</th>
+                        <th class="px-4 py-2">PU</th>
+                        <th class="px-4 py-2">Cantidad</th>
+                        <th class="px-4 py-2">Subtotal</th>
+                        <th class="px-4 py-2">Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in detalles %}
+                    <tr class="border-t">
+                        <td class="px-4 py-2 text-left">{{ c.clave_concepto }}</td>
+                        <td class="px-4 py-2 text-left w-[25rem]">{{ c.descripcion }}</td>
+                        <td class="px-4 py-2">{{ c.unidad }}</td>
+                        <td class="px-4 py-2">
+                            <input type="number" step="any" name="pu_{{ c.clave_concepto }}" value="{{ c.precio_unitario }}" class="w-24 border rounded px-2 py-1 text-right campo-editable" disabled>
+                        </td>
+                        <td class="px-4 py-2">
+                            <input type="number" step="any" name="cantidad_{{ c.clave_concepto }}" value="{{ c.cantidad_estimacion }}" class="w-24 border rounded px-2 py-1 text-right campo-editable" disabled>
+                            <input type="hidden" name="clave[]" value="{{ c.clave_concepto }}">
+                        </td>
+                        <td class="px-4 py-2 text-gray-700">${{ '%.2f'|format(c.subtotal) }}</td>
+                        <td class="px-4 py-2">
+                            <a href="{{ url_for('estimaciones_nuevo.eliminar_concepto_estimacion', estimacion_id=estimacion.id, clave_concepto=c.clave_concepto) }}" class="text-red-600 text-sm hover:underline">🗑</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 flex justify-between">
+            <a href="{{ url_for('estimaciones_nuevo.agregar_conceptos_estimacion', estimacion_id=estimacion.id) }}"
+               class="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600">
+                + Agregar Conceptos
+            </a>
+            <div>
+                <button type="button" id="btn-editar"
+                    class="bg-yellow-500 text-white px-4 py-2 rounded shadow hover:bg-yellow-600">
+                    ✏️ Editar
+                </button>
+                <button type="submit" id="btn-guardar" style="display: none;"
+                    class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700">
+                    💾 Guardar Cambios
+                </button>
+                <a href="{{ url_for('estimaciones_nuevo.amortizacion_estimacion', estimacion_id=estimacion.id) }}"
+                   class="ml-4 inline-block bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700">
+                    Siguiente → Amortización
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('btn-editar').addEventListener('click', function () {
+        document.querySelectorAll('.campo-editable').forEach(input => input.disabled = false);
+        document.getElementById('btn-guardar').style.display = 'inline-block';
+        this.style.display = 'none';
+    });
+</script>
+{% endblock %}
